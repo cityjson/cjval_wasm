@@ -1,0 +1,22 @@
+
+
+
+#dropbox {
+  border: 1px dashed #0F73BD;
+  border-radius: 20px;
+  top: 20px;
+  width: 200px;
+  margin: 20px auto;
+  margin-top: 0px;
+  text-align: center;
+  cursor: pointer;
+  /*background: #0F73BD;*/
+  /*opacity: 0.8;*/
+}
+
+#dropbox.highlight {
+  background: #0F73BD;
+  opacity: 0.5;
+  /*background: green;*/
+  /*border-color: red;*/
+}
