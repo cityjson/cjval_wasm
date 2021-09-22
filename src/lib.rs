@@ -25,4 +25,34 @@ impl Validator {
             return JsValue::from_str(&s.to_string());
         }
     }
+
+    pub fn parent_children_consistency(&self) -> JsValue {
+        let re = self.v.parent_children_consistency();
+        if re.is_empty() {
+            return JsValue::NULL;
+        } else {
+            let s = re.join("\n");
+            return JsValue::from_str(&s.to_string());
+        }
+    }
+
+    pub fn wrong_vertex_index(&self) -> JsValue {
+        let re = self.v.wrong_vertex_index();
+        if re.is_empty() {
+            return JsValue::NULL;
+        } else {
+            let s = re.join("\n");
+            return JsValue::from_str(&s.to_string());
+        }
+    }
+
+    pub fn duplicate_vertices(&self) -> JsValue {
+        let re = self.v.validate_schema();
+        if re.is_empty() {
+            return JsValue::NULL;
+        } else {
+            let s = re.join("\n");
+            return JsValue::from_str(&s.to_string());
+        }
+    }
 }
