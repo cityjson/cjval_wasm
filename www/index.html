@@ -5,89 +5,87 @@
   <title>CityJSON Validator</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script type="module" src="main.js"></script>
-  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/lit.css" />
+  <link rel="stylesheet" href="./css/util.css" />
+  <link rel="stylesheet" href="./css/style.css"/>
 </head>
 <body>
 
 <form id="dropbox" class="my-form">
   <p><img class="logo" src="img/cityjson_logo.svg" width="150"></p>
-  <p class="dbText">Drop your file here,<br> or click to open</p>
-  <input type="file" id="fileElem" accept=".json"  multiple style="display: none">
+  <p class="dbText">Drop a file to validate it</p>
+  <input type="file" id="fileElem" accept=".json"  multiple style="display: none"/>
 </form>
 
-<div>
+<hr>
+<div class="c">
+      
+      <div class="row">
+        <div class="3 col"></div>
+        <div class="6 col">
+            <div id="finalresult-success" class="bg-success white pv1 ph2 rounded">
+              <p id="input-filename-success" class="large m0">&nbsp;</p>
+              The file is 100% valid!
+            </div>
+            <div id="finalresult-warning" class="bg-warning white pv1 ph2 rounded">
+              <p id="input-filename-warning" class="large m0">&nbsp;</p>
+              The file is valid but has warnings
+            </div>
+            <div id="finalresult-error" class="bg-error white pv1 ph2 rounded">
+              <p id="input-filename-error" class="large m0">&nbsp;</p>
+              The file has errors.
+            </div>            
+        </div>
+        <div class="3 col"></div>
+    </div>
 
-<style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
-.tg .tg-0lax{text-align:left;vertical-align:top}
-</style>
-<table id="tab-errors" class="tg">
-<tbody>
-  <tr>
-    <td >JSON file</td>
-    <td id="err-json"></td>
-    <td id="err-json-1"></td>
-  </tr>
-  <tr>
-    <td >schema</td>
-    <td id="err-schema"></td>
-    <td id="err-schema-1"></td>
-  </tr>
-  <tr>
-    <td >parent-child consistency</td>
-    <td ></td>
-    <td ></td>
-  </tr>
-  <tr>
-    <td >wrong vertex index</td>
-    <td ></td>
-    <td ></td>
-  </tr>
-  <tr>
-    <td ></td>
-    <td ></td>
-    <td ></td>
-  </tr>
-</tbody>
-</table>
 
+
+  <table id="tab-errors" class="w-100">
+    <tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>JSON syntax</td>
+        <td id="err_json"></td>
+        <td id="err_json_1"></td>
+      </tr>
+      <tr>
+        <td>schema</td>
+        <td id="err_schema"></td>
+        <td id="err_schema_1"></td>
+      </tr>
+      <tr>
+        <td>vertex indices</td>
+        <td id="err_wrong_vertex_index"></td>
+        <td id="err_wrong_vertex_index_1"></td>
+      </tr>
+      <tr>
+        <td>parent-child consistency</td>
+        <td id="err_parent_child"></td>
+        <td id="err_parent_child_1"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table id="tab-warnings" class="w-100">
+    <tbody>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>Duplicate vertices</td>
+        <td id="war_dup_vertices"></td>
+        <td id="war_dup_vertices_1"></td>
+      </tr>
+    </tbody>
+  </table>
 </div>
-
-<style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
-.tg .tg-0lax{text-align:left;vertical-align:top}
-</style>
-<table id="tab-warnings" class="tg">
-<thead>
-  <tr>
-    <th class="tg-0pky">duplicated vertices</th>
-    <th class="tg-0lax"></th>
-    <th class="tg-0lax"></th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-0lax">orphan vertices</td>
-    <td class="tg-0lax"></td>
-    <td class="tg-0lax"></td>
-  </tr>
-  <tr>
-    <td class="tg-0lax">etc</td>
-    <td class="tg-0lax"></td>
-    <td class="tg-0lax"></td>
-  </tr>
-</tbody>
-</table>
 
 
 </body>

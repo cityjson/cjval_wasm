@@ -47,7 +47,7 @@ impl Validator {
     }
 
     pub fn duplicate_vertices(&self) -> JsValue {
-        let re = self.v.validate_schema();
+        let re = self.v.duplicate_vertices();
         if re.is_empty() {
             return JsValue::NULL;
         } else {

@@ -1,11 +1,14 @@
 import init, { Validator } from './pkg/cjval2_wasm.js';
 
+
+const allerrors = ["err_json", "err_schema", "err_wrong_vertex_index", "err_parent_child"];
+const allwarnings = ["war_dup_vertices"];
+
 async function main() {
   console.log("init");
   await init();
 
-  $("#tab-errors").hide(); 
-  $("#tab-warnings").hide(); 
+  reset_results();
 
   // Dropbox functions
   var dropbox;
@@ -62,9 +65,39 @@ async function main() {
   }
 }
 
-function reset_result_tables(){
-  document.getElementById('err-json').innerHTML = "";
-  document.getElementById('err-json-1').innerHTML = "";
+function reset_results(){
+  $("#tab-errors").hide(); 
+  $("#tab-warnings").hide(); 
+  for (let i = 0; i < allerrors.length; i++) {
+    document.getElementById(allerrors[i]).innerHTML = "";
+    let s = allerrors[i] + "_1";
+    document.getElementById(s).innerHTML = "";
+  }
+  for (let i = 0; i < allwarnings.length; i++) {
+    document.getElementById(allwarnings[i]).innerHTML = "";
+    let s = allwarnings[i] + "_1";
+    document.getElementById(s).innerHTML = "";
+  }
+  $("#finalresult-success").hide();
+  $("#finalresult-warning").hide();
+  $("#finalresult-error").hide();
+}
+
+function display_final_result(filename, isValid, hasWarnings) {
+  $("#tab-errors").show();
+  $("#tab-warnings").show();
+  if (isValid) {
+    if (!hasWarnings) {
+      document.getElementById("input-filename-success").innerHTML = filename;
+      $("#finalresult-success").show();
+    } else {
+      document.getElementById('input-filename-warning').innerHTML = filename;
+      $("#finalresult-warning").show();
+    }
+  } else {
+    document.getElementById('input-filename-error').innerHTML = filename;
+    $("#finalresult-error").show();   
+  }
 }
 
 //-- executed when files are uploaded
@@ -72,37 +105,67 @@ async function handleFiles(files) {
   if (files[0] == null) {
     return
   }
-  reset_result_tables();
+  reset_results();
 
   // console.log("yeah I validate here {}", files);
 
+  var isValid = true;
+  var hasWarnings = false;
   var f = files[0];
   var reader = new FileReader();
   reader.readAsText(f);
   reader.onload = function() {
-    $("#tab-errors").show();
     let validator;
     try {
       validator = Validator.from_str(reader.result);
-      document.getElementById('err-json').innerHTML = "🟢";
+      document.getElementById('err_json').innerHTML = "🟢";
     } catch (error) {
       console.log(error);
-      document.getElementById('err-json').innerHTML = "❌";
-      document.getElementById('err-json-1').innerHTML = error;
+      document.getElementById('err_json').innerHTML = "❌";
+      document.getElementById('err_json_1').innerHTML = error;
+      isValid = false;
+      display_final_result(f.name, isValid, hasWarnings);
       return;
     }
-    // console.log(validator);
     let re = validator.validate_schema();
     if (re == null) {
-      document.getElementById('err-schema').innerHTML = "🟢";
+      document.getElementById('err_schema').innerHTML = "🟢";
     } else {
-      document.getElementById('err-schema').innerHTML = "❌";
-      document.getElementById('err-schema-1').innerHTML = re;
+      document.getElementById('err_schema').innerHTML = "❌";
+      document.getElementById('err_schema_1').innerHTML = re;
+      isValid = false;
+      display_final_result(f.name, isValid, hasWarnings);
+      return;
     }
-    console.log(re);
+    re = validator.wrong_vertex_index();
+    if (re == null) {
+      document.getElementById('err_wrong_vertex_index').innerHTML = "🟢";
+    } else {
+      document.getElementById('err_wrong_vertex_index').innerHTML = "❌";
+      document.getElementById('err_wrong_vertex_index_1').innerHTML = re;
+      isValid = false;
+    }
+    re = validator.parent_children_consistency();
+    if (re == null) {
+      document.getElementById('err_parent_child').innerHTML = "🟢";
+    } else {
+      document.getElementById('err_parent_child').innerHTML = "❌";
+      document.getElementById('err_parent_child_1').innerHTML = re;
+      isValid = false;
+    }
+    re = validator.duplicate_vertices();
+    if (re == null) {
+      document.getElementById('war_dup_vertices').innerHTML = "🟢";
+    } else {
+      document.getElementById('war_dup_vertices').innerHTML = "❌";
+      document.getElementById('war_dup_vertices_1').innerHTML = re;
+      hasWarnings = true;
+    }
+    display_final_result(f.name, isValid, hasWarnings);
+    // console.log(re);
   }; 
-
   $("#fileElem").val("")
+}
 
 
   // for (var i = 0; i < files.length; i++) {
@@ -159,8 +222,6 @@ async function handleFiles(files) {
 
   // //reset the input
   // $("#fileElem").val("")
-
-}
 
 
 main();
