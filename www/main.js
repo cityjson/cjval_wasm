@@ -2,7 +2,10 @@ import init, { Validator } from './pkg/cjval2_wasm.js';
 
 async function main() {
   console.log("init");
-  await init(); 
+  await init();
+
+  $("#tab-errors").hide(); 
+  $("#tab-warnings").hide(); 
 
   // Dropbox functions
   var dropbox;
@@ -59,22 +62,43 @@ async function main() {
   }
 }
 
-//executed when files are uploaded
-async function handleFiles(files) {
+function reset_result_tables(){
+  document.getElementById('err-json').innerHTML = "";
+  document.getElementById('err-json-1').innerHTML = "";
+}
 
-  //if no files are there
+//-- executed when files are uploaded
+async function handleFiles(files) {
   if (files[0] == null) {
     return
   }
+  reset_result_tables();
 
-  console.log("yeah I validate here {}", files);
+  // console.log("yeah I validate here {}", files);
 
   var f = files[0];
   var reader = new FileReader();
   reader.readAsText(f);
   reader.onload = function() {
-    let validator = Validator.from_str(reader.result);
+    $("#tab-errors").show();
+    let validator;
+    try {
+      validator = Validator.from_str(reader.result);
+      document.getElementById('err-json').innerHTML = "🟢";
+    } catch (error) {
+      console.log(error);
+      document.getElementById('err-json').innerHTML = "❌";
+      document.getElementById('err-json-1').innerHTML = error;
+      return;
+    }
+    // console.log(validator);
     let re = validator.validate_schema();
+    if (re == null) {
+      document.getElementById('err-schema').innerHTML = "🟢";
+    } else {
+      document.getElementById('err-schema').innerHTML = "❌";
+      document.getElementById('err-schema-1').innerHTML = re;
+    }
     console.log(re);
   }; 
 
