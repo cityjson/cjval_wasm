@@ -1,0 +1,12 @@
+{
+  "name": "cjval2-wasm",
+  "version": "0.1.0",
+  "files": [
+    "cjval2_wasm_bg.wasm",
+    "cjval2_wasm.js",
+    "cjval2_wasm.d.ts"
+  ],
+  "module": "cjval2_wasm.js",
+  "types": "cjval2_wasm.d.ts",
+  "sideEffects": false
+}
