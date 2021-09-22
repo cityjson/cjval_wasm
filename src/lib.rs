@@ -6,7 +6,7 @@ pub struct Validator {
     v: cjval::CJValidator,
 }
 
-#[wasm_bindgen]
+#[wasm_bindgen(catch)]
 impl Validator {
     pub fn from_str(s: &str) -> Result<Validator, JsValue> {
         let re = cjval::CJValidator::from_str(&s);
