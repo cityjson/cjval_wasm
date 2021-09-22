@@ -5,88 +5,72 @@
   <title>CityJSON Validator</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script type="module" src="main.js"></script>
-  <link rel="stylesheet" href="./css/lit.css" />
-  <link rel="stylesheet" href="./css/util.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
   <link rel="stylesheet" href="./css/style.css"/>
 </head>
+
 <body>
 
-<form id="dropbox" class="my-form">
-  <p><img class="logo" src="img/cityjson_logo.svg" width="150"></p>
-  <p class="dbText">Drop a file to validate it</p>
-  <input type="file" id="fileElem" accept=".json"  multiple style="display: none"/>
-</form>
+<div class="container">
 
-<hr>
-<div class="c">
-      
-      <div class="row">
-        <div class="3 col"></div>
-        <div class="6 col">
-            <div id="finalresult-success" class="bg-success white pv1 ph2 rounded">
-              <p id="input-filename-success" class="large m0">&nbsp;</p>
-              The file is 100% valid!
-            </div>
-            <div id="finalresult-warning" class="bg-warning white pv1 ph2 rounded">
-              <p id="input-filename-warning" class="large m0">&nbsp;</p>
-              The file is valid but has warnings
-            </div>
-            <div id="finalresult-error" class="bg-error white pv1 ph2 rounded">
-              <p id="input-filename-error" class="large m0">&nbsp;</p>
-              The file has errors.
-            </div>            
-        </div>
-        <div class="3 col"></div>
-    </div>
+  <h1 class="text-center">validation validation</h1>
+
+  <form id="dropbox" class="my-form">
+    <p><img class="logo" src="img/cityjson_logo.svg" width="150"></p>
+    <p>Drop a file to validate it</p>
+    <input type="file" id="fileElem" accept=".json"  multiple style="display: none"/>
+  </form>
+
+     
+  <div class="alert alert-success text-center" id="result-success" role="alert">
+    <h5>roger.json</h5>
+    <p>The file is 100% valid!</p>
+  </div>
+  <div class="alert alert-warning text-center" id="result-warning" role="alert">
+    <h5>roger.json</h5>
+    <p>The file is valid but has warnings</p>
+  </div>
+  <div class="alert alert-danger text-center" id="result-error" role="alert">
+    <h5>roger.json</h5>
+    <p>The file has errors.</p>
+  </div>  
 
 
 
-  <table id="tab-errors" class="w-100">
+  <table id="tab-errors" class="table">
+    <thead>
+    <tr>
+      <th scope="col">criterion</th>
+      <th scope="col">details</th>
+    </tr>
+  </thead>
     <tbody>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr>
+      <tr id="err_json">
         <td>JSON syntax</td>
-        <td id="err_json"></td>
-        <td id="err_json_1"></td>
+        <td ></td>
       </tr>
-      <tr>
+      <tr id="err_schema">
         <td>schema</td>
-        <td id="err_schema"></td>
-        <td id="err_schema_1"></td>
+        <td ></td>
       </tr>
-      <tr>
+      <tr id="err_wrong_vertex_index">
         <td>vertex indices</td>
-        <td id="err_wrong_vertex_index"></td>
-        <td id="err_wrong_vertex_index_1"></td>
+        <td ></td>
       </tr>
-      <tr>
+      <tr id="err_parent_child">
         <td>parent-child consistency</td>
-        <td id="err_parent_child"></td>
-        <td id="err_parent_child_1"></td>
+        <td ></td>
+      </tr>
+      <tr id="war_dup_vertices">
+        <td>duplicate vertices</td>
+        <td ></td>
       </tr>
     </tbody>
   </table>
 
-  <table id="tab-warnings" class="w-100">
-    <tbody>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>Duplicate vertices</td>
-        <td id="war_dup_vertices"></td>
-        <td id="war_dup_vertices_1"></td>
-      </tr>
-    </tbody>
-  </table>
 </div>
 
-
+  <!-- Option 1: Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 </body>
 </html>
