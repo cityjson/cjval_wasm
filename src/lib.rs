@@ -20,19 +20,51 @@ impl Validator {
         self.v.get_input_cityjson_version()
     }
 
-    // pub fn has_extensions(&self) -> JsValue {
-    //     let re = self.v.has_extensions();
-    //     if re.is_none() {
-    //         return JsValue::NULL;
-    //     } else {
-    //         let re2 = re.unwrap();
-    //         return JsValue::from_str(&s.to_string());
-    //     }
-    // }
+    pub fn has_extensions(&self) -> JsValue {
+        let re = self.v.has_extensions();
+        if re.is_none() {
+            return JsValue::NULL;
+        } else {
+            let s = re.unwrap().join("\n");
+            return JsValue::from_str(&s.to_string());
+        }
+    }
+
+    pub fn get_extensions(&self) -> usize {
+        let re = self.v.get_extensions();
+        return re.len();
+    }
+
+    pub fn add_one_extension_from_str(
+        &mut self,
+        ext_schema_name: &str,
+        ext_schema_str: &str,
+    ) -> JsValue {
+        let re = self
+            .v
+            .add_one_extension_from_str(&ext_schema_name, &ext_schema_str);
+        match re {
+            Ok(()) => return JsValue::NULL,
+            Err(e) => {
+                let s = format!("{}", e);
+                return JsValue::from_str(&s);
+            }
+        }
+    }
 
     //-- ERRORS
     pub fn validate_schema(&self) -> JsValue {
         let re = self.v.validate_schema();
+        if re.is_empty() {
+            return JsValue::NULL;
+        } else {
+            let s = re.join("\n");
+            return JsValue::from_str(&s.to_string());
+        }
+    }
+
+    pub fn validate_extensions(&self) -> JsValue {
+        let re = self.v.validate_extensions();
         if re.is_empty() {
             return JsValue::NULL;
         } else {

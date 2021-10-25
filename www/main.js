@@ -1,7 +1,19 @@
 import init, { Validator } from './pkg/cjval_wasm.js';
 
 
-const allerrors = ["err_json", "err_schema", "err_wrong_vertex_index", "err_parent_child", "war_dup_vertices"];
+const allerrors = ["err_json_syntax", 
+                   "err_schema", 
+                   "err_ext_schema", 
+                   "err_parents_children_consistency",
+                   "err_parents_children_consistency", 
+                   "err_wrong_vertex_index",
+                   "err_semantics_arrays", 
+                   "war_duplicate_vertices",
+                   "war_unused_vertices",
+                   "war_extra_root_properties"
+                  ];
+
+
 
 async function main() {
   console.log("init");
@@ -69,11 +81,11 @@ function reset_results(){
   $("#result-warning").hide();
   $("#result-error").hide();
   $("#tab-errors").hide(); 
-  // for (let i = 0; i < allerrors.length; i++) {
-  //   let e = document.getElementById(allerrors[i]);
-  //   e.classList.remove("table-success", "table-danger", "table-warning");
-  //   e.children[1].innerHTML = "";
-  // }
+  for (let i = 0; i < allerrors.length; i++) {
+    let e = document.getElementById(allerrors[i]);
+    e.classList.remove("table-success", "table-danger", "table-warning");
+    e.children[1].innerHTML = "";
+  }
 }
 
 function display_final_result(filename, isValid, hasWarnings) {
@@ -91,6 +103,27 @@ function display_final_result(filename, isValid, hasWarnings) {
     document.getElementById('result-error').children[0].innerHTML = filename;
     $("#result-error").show();   
   }
+}
+
+function yo(s) {
+  console.log(s);
+}
+
+function download2(url, validator) {
+  // let url = 'https://labtask87.s3.amazonaws.com/employeedata.json';
+  // console.log(url);
+  return fetch(url)
+    .then(res => res.text())
+    .then(text => {
+      // console.log(out);
+      let a = validator.add_one_extension_from_str(url, text);
+      if (a == null) {
+        console.log("extension added");
+      } else {
+        console.log(a);
+      }
+    }).catch(err => { console.error('fetch failed', err);
+  });
 }
 
 //-- executed when files are uploaded
@@ -120,6 +153,7 @@ async function handleFiles(files) {
       display_final_result(f.name, isValid, hasWarnings);
       return;
     }
+    //-- validate_schema
     let re = validator.validate_schema();
     if (re == null) {
       document.getElementById('err_schema').className = "table-success";
@@ -130,6 +164,29 @@ async function handleFiles(files) {
       display_final_result(f.name, isValid, hasWarnings);
       return;
     }
+    //-- extensions schemas
+    re = validator.has_extensions();
+    if (re != null) {
+      console.log("extensions!");
+      let exts = re.split('\n');
+      // exts.forEach(download);
+      for (let i = 0; i < exts.length; i++) {
+        let b = download2(exts[i], validator);
+      }
+    }
+    setTimeout(function(){
+      console.log("# exts: ", validator.get_extensions());
+    re = validator.validate_extensions();
+    if (re == null) {
+      document.getElementById('err_ext_schema').className = "table-success";
+    } else {
+      document.getElementById('err_ext_schema').className = "table-danger";
+      document.getElementById('err_ext_schema').children[1].innerHTML = re;
+      isValid = false;
+    }
+    }, 2000);//Delay 2 seconds
+
+    //-- wrong vertex index
     re = validator.wrong_vertex_index();
     if (re == null) {
       document.getElementById('err_wrong_vertex_index').className = "table-success";
@@ -146,8 +203,18 @@ async function handleFiles(files) {
       document.getElementById('err_parents_children_consistency').children[1].innerHTML = re;
       isValid = false;
     }
+    re = validator.semantics_arrays();
+    if (re == null) {
+      document.getElementById('err_semantics_arrays').className = "table-success";
+    } else {
+      document.getElementById('err_semantics_arrays').className = "table-danger";
+      document.getElementById('err_semantics_arrays').children[1].innerHTML = re;
+      isValid = false;
+    }
+
+
     if (isValid == false) {
-      console.log("falseeeee")
+      // console.log("falseeeee")
       display_final_result(f.name, isValid, hasWarnings);
       return;
     }
