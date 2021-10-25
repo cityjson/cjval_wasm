@@ -76,11 +76,46 @@ async function main() {
   }
 }
 
+//-- executed when files are uploaded
+async function handleFiles(files) {
+  if (files[0] == null) {
+    return;
+  }
+  reset_results();
+  var f = files[0]; //-- read only the first file
+  var reader = new FileReader();
+  reader.readAsText(f);
+  console.log(f);
+  document.getElementById('inputsummary').children[0].innerHTML = f.name;
+  document.getElementById('inputsummary').classList.remove('invisible');
+  reader.onload = function() {
+    let validator;
+    try {
+      validator = Validator.from_str(reader.result);
+      document.getElementById('err_json_syntax').className = "table-success";
+    } catch (error) {
+      console.log(error);
+      document.getElementById('err_json_syntax').className = "table-danger";
+      document.getElementById('err_json_syntax').children[1].innerHTML = error;
+      isValid = false;
+      display_final_result(f.name, isValid, hasWarnings);
+      return;
+    }
+    //-- fetch all extensions 
+    
+    download_all_extensions(validator, () => {
+      allvalidations(validator, f.name);
+    });
+    
+  }
+  $("#fileElem").val("")
+}
+
 function reset_results(){
-  $("#result-success").hide();
-  $("#result-warning").hide();
-  $("#result-error").hide();
-  $("#tab-errors").hide(); 
+  document.getElementById("theresult").classList.remove("alert-success"); 
+  document.getElementById("theresult").classList.remove("alert-warning"); 
+  document.getElementById("theresult").classList.remove("alert-danger"); 
+  document.getElementById("theresult").classList.add('invisible');
   for (let i = 0; i < allerrors.length; i++) {
     let e = document.getElementById(allerrors[i]);
     e.classList.remove("table-success", "table-danger", "table-warning");
@@ -89,38 +124,43 @@ function reset_results(){
 }
 
 function display_final_result(filename, isValid, hasWarnings) {
-  $("#tab-errors").show();
-  $("#tab-warnings").show();
+  // $("#tab-errors").show();
+  document.getElementById("tab-errors").classList.remove('invisible');
   if (isValid) {
     if (!hasWarnings) {
-      document.getElementById("result-success").children[0].innerHTML = filename;
-      $("#result-success").show();
+      document.getElementById("theresult").children[0].innerHTML = "The file is 100% valid!";
+      document.getElementById("theresult").classList.add("alert-success");
+
     } else {
-      document.getElementById('result-warning').children[0].innerHTML = filename;
-      $("#result-warning").show();
+      document.getElementById("theresult").children[0].innerHTML = "The file is valid but has warnings";
+      document.getElementById("theresult").classList.add("alert-warning");
     }
   } else {
-    document.getElementById('result-error').children[0].innerHTML = filename;
-    $("#result-error").show();   
+      document.getElementById("theresult").children[0].innerHTML = "The file is invalid";
+      document.getElementById("theresult").classList.add("alert-danger");
   }
+  document.getElementById("theresult").classList.remove('invisible');
 }
 
 
 function download_all_extensions(val, _callback) {
+  console.log("has extensions?");
   let re = val.has_extensions();
   if (re != null) {
     console.log("extensions!");
     let urls = re.split('\n');
+    document.getElementById('inputsummary').children[1].innerHTML += urls[0];
     var promises = urls.map(url => fetch(url).then(y => y.text()));
     console.log(promises);
     Promise.all(promises).then(results => {
       for (let i = 0; i < results.length; i++) {
         val.add_one_extension_from_str("a", results[i]);
       }
-      // console.log("# exts2: ", val.get_extensions());
       _callback();
     });
-
+  }
+  else {
+    _callback();
   }
 }
 
@@ -214,93 +254,10 @@ function allvalidations(validator, fname) {
   console.log(re);  
 }
 
-//-- executed when files are uploaded
-async function handleFiles(files) {
-  if (files[0] == null) {
-    return;
-  }
-  reset_results();
-  var f = files[0]; //-- read only the first file
-  var reader = new FileReader();
-  reader.readAsText(f);
-  reader.onload = function() {
-    let validator;
-    try {
-      validator = Validator.from_str(reader.result);
-      document.getElementById('err_json_syntax').className = "table-success";
-    } catch (error) {
-      console.log(error);
-      document.getElementById('err_json_syntax').className = "table-danger";
-      document.getElementById('err_json_syntax').children[1].innerHTML = error;
-      isValid = false;
-      display_final_result(f.name, isValid, hasWarnings);
-      return;
-    }
-    //-- fetch all extensions 
-    
-    download_all_extensions(validator, () => {
-      allvalidations(validator, f.name);
-    });
-    
-  }
-  $("#fileElem").val("")
-}
 
 
-  // for (var i = 0; i < files.length; i++) {
-  //   //if file is not json
-  //   var split_file_name = files[i].name.split(".");
-  //   if (split_file_name[split_file_name.length - 1] != "json") {
-  //     alert("file '" + files[i].name + "' is not a json file");
-  //     continue
-  //   }
 
-  //   //if file already exist
-  //   if (files[i].name.split(".")[0] in jsonDict) {
-  //     alert("file '" + files[i].name + "' already loaded!");
-  //     continue
-  //   }
 
-  //   //load json into memory
-  //   var objectURL = window.URL.createObjectURL(files[i])
-  //   var json = await loadJSON(objectURL)
-  //   var jsonName = files[i].name.split(".")[0]
-
-  //   //json file has an error and cannot be loaded
-  //   if (json == -1){
-  //     window.alert("File " + jsonName + ".json has an error and cannot be loaded!")
-  //     continue
-  //   }
-
-  //   //add json to the dict
-  //   jsonDict[jsonName] = json;
-
-  //   //add it to the infoBox
-  //   $("#filesBox").show();
-  //   $('#TreeView').append('<li id="li_' + jsonName + '">' +
-  //     '<span onclick="toggleTree(this);" id="span_' + jsonName + '">▽</span>' +
-  //     '<input type="checkbox" onclick="toggleFile(this);" id="checkFile_' + jsonName + '" checked>' +
-  //     '<span class="spanLiFileName">' + jsonName + '</span>' +
-  //     '<ul class="fileTree" id="ul_' + jsonName + '"></ul>' +
-  //     '</li>')
-
-  //   //load the cityObjects into the viewer
-  //   await loadCityObjects(jsonName)
-
-  //   //already render loaded objects
-  //   renderer.render(scene, camera);
-  //   console.log("JSON file '" + jsonName + "' loaded")
-
-  // }
-
-  // //hide loader when loadin is finished
-  // $("#loader").hide();
-
-  // //global variable that a json is loaded
-  // boolJSONload = true
-
-  // //reset the input
-  // $("#fileElem").val("")
 
 
 main();
