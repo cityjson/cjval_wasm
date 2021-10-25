@@ -105,25 +105,113 @@ function display_final_result(filename, isValid, hasWarnings) {
   }
 }
 
-function yo(s) {
-  console.log(s);
+
+function download_all_extensions(val, _callback) {
+  let re = val.has_extensions();
+  if (re != null) {
+    console.log("extensions!");
+    let urls = re.split('\n');
+    var promises = urls.map(url => fetch(url).then(y => y.text()));
+    console.log(promises);
+    Promise.all(promises).then(results => {
+      for (let i = 0; i < results.length; i++) {
+        val.add_one_extension_from_str("a", results[i]);
+      }
+      // console.log("# exts2: ", val.get_extensions());
+      _callback();
+    });
+
+  }
 }
 
-function download2(url, validator) {
-  // let url = 'https://labtask87.s3.amazonaws.com/employeedata.json';
-  // console.log(url);
-  return fetch(url)
-    .then(res => res.text())
-    .then(text => {
-      // console.log(out);
-      let a = validator.add_one_extension_from_str(url, text);
-      if (a == null) {
-        console.log("extension added");
-      } else {
-        console.log(a);
-      }
-    }).catch(err => { console.error('fetch failed', err);
-  });
+
+function allvalidations(validator, fname) {
+  console.log("all validations");
+  console.log("# exts1: ", validator.get_extensions());
+  var isValid = true;
+  var hasWarnings = false;
+  //-- validate_schema
+  let re = validator.validate_schema();
+  if (re == null) {
+    document.getElementById('err_schema').className = "table-success";
+  } else {
+    document.getElementById('err_schema').className = "table-danger";
+    document.getElementById('err_schema').children[1].innerHTML = re;
+    isValid = false;
+    display_final_result(fname, isValid, hasWarnings);
+    return;
+  }
+
+  re = validator.validate_extensions();
+  if (re == null) {
+    document.getElementById('err_ext_schema').className = "table-success";
+  } else {
+    document.getElementById('err_ext_schema').className = "table-danger";
+    document.getElementById('err_ext_schema').children[1].innerHTML = re;
+    isValid = false;
+    display_final_result(fname, isValid, hasWarnings);
+    return;
+  }
+
+  //-- wrong vertex index
+  re = validator.wrong_vertex_index();
+  if (re == null) {
+    document.getElementById('err_wrong_vertex_index').className = "table-success";
+  } else {
+    document.getElementById('err_wrong_vertex_index').className = "table-danger";
+    document.getElementById('err_wrong_vertex_index').children[1].innerHTML = re;
+    isValid = false;
+  }
+  re = validator.parent_children_consistency();
+  if (re == null) {
+    document.getElementById('err_parents_children_consistency').className = "table-success";
+  } else {
+    document.getElementById('err_parents_children_consistency').className = "table-danger";
+    document.getElementById('err_parents_children_consistency').children[1].innerHTML = re;
+    isValid = false;
+  }
+  re = validator.semantics_arrays();
+  if (re == null) {
+    document.getElementById('err_semantics_arrays').className = "table-success";
+  } else {
+    document.getElementById('err_semantics_arrays').className = "table-danger";
+    document.getElementById('err_semantics_arrays').children[1].innerHTML = re;
+    isValid = false;
+  }
+
+  if (isValid == false) {
+    // console.log("falseeeee")
+    display_final_result(fname, isValid, hasWarnings);
+    return;
+  }
+  //-- WARNINGS
+  re = validator.duplicate_vertices();
+  if (re == null) {
+    document.getElementById('war_duplicate_vertices').className = "table-success";
+  } else {
+    document.getElementById('war_duplicate_vertices').className = "table-warning";
+    document.getElementById('war_duplicate_vertices').children[1].innerHTML = re;
+    hasWarnings = true;
+  }
+  re = validator.extra_root_properties();
+  if (re == null) {
+    document.getElementById('war_extra_root_properties').className = "table-success";
+  } else {
+    document.getElementById('war_extra_root_properties').className = "table-warning";
+    document.getElementById('war_extra_root_properties').children[1].innerHTML = re;
+    hasWarnings = true;
+  }    
+  re = validator.unused_vertices();
+  if (re == null) {
+    document.getElementById('war_unused_vertices').className = "table-success";
+  } else {
+    document.getElementById('war_unused_vertices').className = "table-warning";
+    document.getElementById('war_unused_vertices').children[1].innerHTML = re;
+    hasWarnings = true;
+  }     
+  //-- FINAL RESULTS
+  display_final_result(fname, isValid, hasWarnings);
+  console.log(re);  
 }
 
 //-- executed when files are uploaded
@@ -132,12 +220,7 @@ async function handleFiles(files) {
     return;
   }
   reset_results();
-
-  // console.log("yeah I validate here {}", files);
-
-  var isValid = true;
-  var hasWarnings = false;
-  var f = files[0];
+  var f = files[0]; //-- read only the first file
   var reader = new FileReader();
   reader.readAsText(f);
   reader.onload = function() {
@@ -153,99 +236,12 @@ async function handleFiles(files) {
       display_final_result(f.name, isValid, hasWarnings);
       return;
     }
-    //-- validate_schema
-    let re = validator.validate_schema();
-    if (re == null) {
-      document.getElementById('err_schema').className = "table-success";
-    } else {
-      document.getElementById('err_schema').className = "table-danger";
-      document.getElementById('err_schema').children[1].innerHTML = re;
-      isValid = false;
-      display_final_result(f.name, isValid, hasWarnings);
-      return;
-    }
-    //-- extensions schemas
-    re = validator.has_extensions();
-    if (re != null) {
-      console.log("extensions!");
-      let exts = re.split('\n');
-      // exts.forEach(download);
-      for (let i = 0; i < exts.length; i++) {
-        let b = download2(exts[i], validator);
-      }
-    }
-    setTimeout(function(){
-      console.log("# exts: ", validator.get_extensions());
-    re = validator.validate_extensions();
-    if (re == null) {
-      document.getElementById('err_ext_schema').className = "table-success";
-    } else {
-      document.getElementById('err_ext_schema').className = "table-danger";
-      document.getElementById('err_ext_schema').children[1].innerHTML = re;
-      isValid = false;
-    }
-    }, 2000);//Delay 2 seconds
-
-    //-- wrong vertex index
-    re = validator.wrong_vertex_index();
-    if (re == null) {
-      document.getElementById('err_wrong_vertex_index').className = "table-success";
-    } else {
-      document.getElementById('err_wrong_vertex_index').className = "table-danger";
-      document.getElementById('err_wrong_vertex_index').children[1].innerHTML = re;
-      isValid = false;
-    }
-    re = validator.parent_children_consistency();
-    if (re == null) {
-      document.getElementById('err_parents_children_consistency').className = "table-success";
-    } else {
-      document.getElementById('err_parents_children_consistency').className = "table-danger";
-      document.getElementById('err_parents_children_consistency').children[1].innerHTML = re;
-      isValid = false;
-    }
-    re = validator.semantics_arrays();
-    if (re == null) {
-      document.getElementById('err_semantics_arrays').className = "table-success";
-    } else {
-      document.getElementById('err_semantics_arrays').className = "table-danger";
-      document.getElementById('err_semantics_arrays').children[1].innerHTML = re;
-      isValid = false;
-    }
-
-
-    if (isValid == false) {
-      // console.log("falseeeee")
-      display_final_result(f.name, isValid, hasWarnings);
-      return;
-    }
-    //-- WARNINGS
-    re = validator.duplicate_vertices();
-    if (re == null) {
-      document.getElementById('war_duplicate_vertices').className = "table-success";
-    } else {
-      document.getElementById('war_duplicate_vertices').className = "table-warning";
-      document.getElementById('war_duplicate_vertices').children[1].innerHTML = re;
-      hasWarnings = true;
-    }
-    re = validator.extra_root_properties();
-    if (re == null) {
-      document.getElementById('war_extra_root_properties').className = "table-success";
-    } else {
-      document.getElementById('war_extra_root_properties').className = "table-warning";
-      document.getElementById('war_extra_root_properties').children[1].innerHTML = re;
-      hasWarnings = true;
-    }    
-    re = validator.unused_vertices();
-    if (re == null) {
-      document.getElementById('war_unused_vertices').className = "table-success";
-    } else {
-      document.getElementById('war_unused_vertices').className = "table-warning";
-      document.getElementById('war_unused_vertices').children[1].innerHTML = re;
-      hasWarnings = true;
-    }     
-    //-- FINAL RESULTS
-    display_final_result(f.name, isValid, hasWarnings);
-    // console.log(re);
+    //-- fetch all extensions 
+    
+    download_all_extensions(validator, () => {
+      allvalidations(validator, f.name);
+    });
+    
   }
   $("#fileElem").val("")
 }
