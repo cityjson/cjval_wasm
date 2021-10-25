@@ -1,4 +1,4 @@
-import init, { Validator } from './pkg/cjval2_wasm.js';
+import init, { Validator } from './pkg/cjval_wasm.js';
 
 
 const allerrors = ["err_json", "err_schema", "err_wrong_vertex_index", "err_parent_child", "war_dup_vertices"];
@@ -65,15 +65,15 @@ async function main() {
 }
 
 function reset_results(){
-  $("#tab-errors").hide(); 
-  for (let i = 0; i < allerrors.length; i++) {
-    let e = document.getElementById(allerrors[i]);
-    e.classList.remove("table-success", "table-danger", "table-warning");
-    e.children[1].innerHTML = "";
-  }
   $("#result-success").hide();
   $("#result-warning").hide();
   $("#result-error").hide();
+  $("#tab-errors").hide(); 
+  // for (let i = 0; i < allerrors.length; i++) {
+  //   let e = document.getElementById(allerrors[i]);
+  //   e.classList.remove("table-success", "table-danger", "table-warning");
+  //   e.children[1].innerHTML = "";
+  // }
 }
 
 function display_final_result(filename, isValid, hasWarnings) {
@@ -111,11 +111,11 @@ async function handleFiles(files) {
     let validator;
     try {
       validator = Validator.from_str(reader.result);
-      document.getElementById('err_json').className = "table-success";
+      document.getElementById('err_json_syntax').className = "table-success";
     } catch (error) {
       console.log(error);
-      document.getElementById('err_json').className = "table-danger";
-      document.getElementById('err_json').children[1].innerHTML = error;
+      document.getElementById('err_json_syntax').className = "table-danger";
+      document.getElementById('err_json_syntax').children[1].innerHTML = error;
       isValid = false;
       display_final_result(f.name, isValid, hasWarnings);
       return;
@@ -140,10 +140,10 @@ async function handleFiles(files) {
     }
     re = validator.parent_children_consistency();
     if (re == null) {
-      document.getElementById('err_parent_child').className = "table-success";
+      document.getElementById('err_parents_children_consistency').className = "table-success";
     } else {
-      document.getElementById('err_parent_child').className = "table-danger";
-      document.getElementById('err_parent_child').children[1].innerHTML = re;
+      document.getElementById('err_parents_children_consistency').className = "table-danger";
+      document.getElementById('err_parents_children_consistency').children[1].innerHTML = re;
       isValid = false;
     }
     if (isValid == false) {
@@ -154,12 +154,29 @@ async function handleFiles(files) {
     //-- WARNINGS
     re = validator.duplicate_vertices();
     if (re == null) {
-      document.getElementById('war_dup_vertices').className = "table-success";
+      document.getElementById('war_duplicate_vertices').className = "table-success";
     } else {
-      document.getElementById('war_dup_vertices').className = "table-warning";
-      document.getElementById('war_dup_vertices').children[1].innerHTML = re;
+      document.getElementById('war_duplicate_vertices').className = "table-warning";
+      document.getElementById('war_duplicate_vertices').children[1].innerHTML = re;
       hasWarnings = true;
     }
+    re = validator.extra_root_properties();
+    if (re == null) {
+      document.getElementById('war_extra_root_properties').className = "table-success";
+    } else {
+      document.getElementById('war_extra_root_properties').className = "table-warning";
+      document.getElementById('war_extra_root_properties').children[1].innerHTML = re;
+      hasWarnings = true;
+    }    
+    re = validator.unused_vertices();
+    if (re == null) {
+      document.getElementById('war_unused_vertices').className = "table-success";
+    } else {
+      document.getElementById('war_unused_vertices').className = "table-warning";
+      document.getElementById('war_unused_vertices').children[1].innerHTML = re;
+      hasWarnings = true;
+    }     
+    //-- FINAL RESULTS
     display_final_result(f.name, isValid, hasWarnings);
     // console.log(re);
   }
