@@ -13,31 +13,26 @@
 
 <div class="container">
 
-  <h1 class="text-center">validation validation</h1>
 
   <form id="dropbox" class="my-form">
-    <p><img class="logo" src="img/cityjson_logo.svg" width="150"></p>
+    <p><img class="logo" src="img/cityjson_logo.svg"></p>
     <p>Drop a file to validate it</p>
     <input type="file" id="fileElem" accept=".json"  multiple style="display: none"/>
   </form>
 
      
-  <div class="alert alert-success text-center" id="result-success" role="alert">
-    <h5>roger.json</h5>
-    <p>The file is 100% valid!</p>
+  <h5><span class="badge bg-danger" id="theresult"></span></h5>
+  <div class="alert alert-secondary invisible" id="inputsummary" role="alert">
+    <p id="filename"></p>
+    <p id="cjversion"></p>
+    <p>Extensions:
+      <ul id="theextensions" class="list-group">
+      </ul>
+    </p>
   </div>
-  <div class="alert alert-warning text-center" id="result-warning" role="alert">
-    <h5>roger.json</h5>
-    <p>The file is valid but has warnings</p>
-  </div>
-  <div class="alert alert-danger text-center" id="result-error" role="alert">
-    <h5>roger.json</h5>
-    <p>The file has errors.</p>
-  </div>  
 
 
-
-  <table id="tab-errors" class="table">
+  <table id="tab-errors" class="table invisible">
     <thead>
     <tr>
       <th scope="col">criterion</th>
@@ -45,26 +40,42 @@
     </tr>
   </thead>
     <tbody>
-      <tr id="err_json">
+      <tr id="err_json_syntax">
         <td>JSON syntax</td>
         <td ></td>
       </tr>
       <tr id="err_schema">
-        <td>schema</td>
+        <td>CityJSON schemas</td>
+        <td ></td>
+      </tr>
+      <tr id="err_ext_schema">
+        <td>Extensions schemas</td>
+        <td ></td>
+      </tr>      
+      <tr id="err_parents_children_consistency">
+        <td>parents_children_consistency</td>
         <td ></td>
       </tr>
       <tr id="err_wrong_vertex_index">
-        <td>vertex indices</td>
+        <td>wrong_vertex_index</td>
+        <td ></td>
+      </tr>      
+      <tr id="err_semantics_arrays">
+        <td>semantics_arrays</td>
         <td ></td>
       </tr>
-      <tr id="err_parent_child">
-        <td>parent-child consistency</td>
+      <tr id="war_duplicate_vertices">
+        <td>duplicate_vertices (warnings)</td>
         <td ></td>
       </tr>
-      <tr id="war_dup_vertices">
-        <td>duplicate vertices</td>
+      <tr id="war_extra_root_properties">
+        <td>extra_root_properties (warnings)</td>
         <td ></td>
       </tr>
+      <tr id="war_unused_vertices">
+        <td>unused_vertices (warnings)</td>
+        <td ></td>
+      </tr>      
     </tbody>
   </table>
 

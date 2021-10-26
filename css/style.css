@@ -2,12 +2,14 @@
 
 
 #dropbox {
-  border: 1px dashed #0F73BD;
+  border: 1px dashed #6449D6;
   border-radius: 20px;
-  top: 20px;
+  /*top: 20px;*/
   width: 200px;
-  margin: 30px auto;
-  margin-top: 0px;
+  margin: 30px auto 30px auto;
+  /*display: flex;*/
+  /*justify-content: center;*/
+  /*margin-top: 10px;*/
   text-align: center;
   cursor: pointer;
   /*background: #0F73BD;*/
