@@ -258,11 +258,13 @@ function allvalidations(validator, fname) {
       return;
     }
   } else {
-    document.getElementById('err_ext_schema').className = "table-danger";
-    document.getElementById('err_ext_schema').children[1].innerHTML = "validation of Extensions is not supported in v1.0, upgrade to v1.1";
-    isValid = false;
-    display_final_result(isValid, hasWarnings);
-    return;
+    if (validator.get_extensions() > 0) {
+      document.getElementById('err_ext_schema').className = "table-danger";
+      document.getElementById('err_ext_schema').children[1].innerHTML = "validation of Extensions is not supported in v1.0, upgrade to v1.1";
+      isValid = false;
+      display_final_result(isValid, hasWarnings);
+      return;
+    }
   }
 
   //-- wrong vertex index
