@@ -93,6 +93,15 @@ async function handleFiles(files) {
     try {
       validator = Validator.from_str(reader.result);
       document.getElementById('err_json_syntax').className = "table-success";
+      let cjv = validator.get_input_cityjson_version();
+      console.log(cjv);
+      if (cjv == 11){
+        document.getElementById('cjversion').innerHTML = "v1.1";
+      } else if (cjv == 10) {
+        document.getElementById('cjversion').innerHTML = "v1.0 (it would be a good idea to upgrade to v1.1)";
+      } else {
+        document.getElementById('cjversion').innerHTML = "version <1.0 (no validation possible)";
+      }
     } catch (error) {
       console.log(error);
       document.getElementById('err_json_syntax').className = "table-danger";
@@ -102,7 +111,6 @@ async function handleFiles(files) {
       return;
     }
     //-- fetch all extensions 
-    
     download_all_extensions(validator, () => {
       allvalidations(validator, f.name);
     });
@@ -238,12 +246,20 @@ function allvalidations(validator, fname) {
     return;
   }
 
-  re = validator.validate_extensions();
-  if (re == null) {
-    document.getElementById('err_ext_schema').className = "table-success";
+  if (validator.get_input_cityjson_version == 11) {
+    re = validator.validate_extensions();
+    if (re == null) {
+      document.getElementById('err_ext_schema').className = "table-success";
+    } else {
+      document.getElementById('err_ext_schema').className = "table-danger";
+      document.getElementById('err_ext_schema').children[1].innerHTML = re;
+      isValid = false;
+      display_final_result(isValid, hasWarnings);
+      return;
+    }
   } else {
     document.getElementById('err_ext_schema').className = "table-danger";
-    document.getElementById('err_ext_schema').children[1].innerHTML = re;
+    document.getElementById('err_ext_schema').children[1].innerHTML = "validation of Extensions is not supported in v1.0, upgrade to v1.1";
     isValid = false;
     display_final_result(isValid, hasWarnings);
     return;
