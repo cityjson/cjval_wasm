@@ -246,7 +246,7 @@ function allvalidations(validator, fname) {
     return;
   }
 
-  if (validator.get_input_cityjson_version == 11) {
+  if (validator.get_input_cityjson_version() == 11) {
     re = validator.validate_extensions();
     if (re == null) {
       document.getElementById('err_ext_schema').className = "table-success";
