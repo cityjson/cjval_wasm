@@ -98,7 +98,7 @@ async function handleFiles(files) {
       document.getElementById('err_json_syntax').className = "table-danger";
       document.getElementById('err_json_syntax').children[1].innerHTML = error;
       isValid = false;
-      display_final_result(f.name, isValid, hasWarnings);
+      display_final_result(isValid, hasWarnings);
       return;
     }
     //-- fetch all extensions 
@@ -112,9 +112,11 @@ async function handleFiles(files) {
 }
 
 function reset_results(){
-  document.getElementById("theresult").classList.remove("alert-success"); 
-  document.getElementById("theresult").classList.remove("alert-warning"); 
-  document.getElementById("theresult").classList.remove("alert-danger"); 
+  const myNode = document.getElementById("theextensions");
+  myNode.innerHTML = '';
+  document.getElementById("theresult").classList.remove("bg-success"); 
+  document.getElementById("theresult").classList.remove("bg-warning"); 
+  document.getElementById("theresult").classList.remove("bg-danger"); 
   document.getElementById("theresult").classList.add('invisible');
   for (let i = 0; i < allerrors.length; i++) {
     let e = document.getElementById(allerrors[i]);
@@ -123,43 +125,97 @@ function reset_results(){
   }
 }
 
-function display_final_result(filename, isValid, hasWarnings) {
+function display_final_result(isValid, hasWarnings) {
   // $("#tab-errors").show();
   document.getElementById("tab-errors").classList.remove('invisible');
   if (isValid) {
     if (!hasWarnings) {
-      document.getElementById("theresult").children[0].innerHTML = "The file is 100% valid!";
-      document.getElementById("theresult").classList.add("alert-success");
+      document.getElementById("theresult").innerHTML = "The file is 100% valid!";
+      document.getElementById("theresult").classList.add("bg-success");
 
     } else {
-      document.getElementById("theresult").children[0].innerHTML = "The file is valid but has warnings";
-      document.getElementById("theresult").classList.add("alert-warning");
+      document.getElementById("theresult").innerHTML = "The file is valid but has warnings";
+      document.getElementById("theresult").classList.add("bg-warning");
     }
   } else {
-      document.getElementById("theresult").children[0].innerHTML = "The file is invalid";
-      document.getElementById("theresult").classList.add("alert-danger");
+      document.getElementById("theresult").innerHTML = "The file is invalid";
+      document.getElementById("theresult").classList.add("bg-danger");
   }
   document.getElementById("theresult").classList.remove('invisible');
 }
 
 
 function download_all_extensions(val, _callback) {
-  console.log("has extensions?");
   let re = val.has_extensions();
   if (re != null) {
-    console.log("extensions!");
     let urls = re.split('\n');
-    document.getElementById('inputsummary').children[1].innerHTML += urls[0];
-    var promises = urls.map(url => fetch(url).then(y => y.text()));
+    // const promises = [];
+    // for (let i = 0; i < urls.length; i++) {
+    //   let a = 
+    //     fetch(urls[i])
+    //     .then(y => y.text())
+    //     .catch((error) => {
+    //       console.error('Error:', error);
+    //     }
+    //   );
+    //   promises.push(a);
+    // }
+    var promises = urls.map(url => 
+      fetch(url)
+      .then(y => y.text())
+      .catch((error) => {
+        console.error('Error:', error);
+        alert("Error: cannot dowload Extension (Cross-Origin Request Blocked)");
+      })
+    );
     console.log(promises);
     Promise.all(promises).then(results => {
       for (let i = 0; i < results.length; i++) {
-        val.add_one_extension_from_str("a", results[i]);
+        if (results[i] == "404: Not Found") {
+          console.log("404:", urls[i]);
+          const li = document.createElement("li");
+          li.classList.add("list-group-item");
+          li.classList.add("d-flex");
+          li.classList.add("justify-content-between");
+          li.classList.add("align-items-center");
+          li.innerHTML = urls[i];
+          const sp = document.createElement("span");
+          sp.classList.add("badge");
+          sp.classList.add("bg-danger");
+          sp.classList.add("rounded-pill");
+          sp.innerHTML = "error";
+          li.appendChild(sp);
+          document.getElementById("theextensions").appendChild(li);
+          display_final_result(false, false);
+          return;
+        } else {
+          const li = document.createElement("li");
+          li.classList.add("list-group-item");
+          li.classList.add("d-flex");
+          li.classList.add("justify-content-between");
+          li.classList.add("align-items-center");
+          li.innerHTML = urls[i];
+          const sp = document.createElement("span");
+          sp.classList.add("badge");
+          sp.classList.add("bg-success");
+          sp.classList.add("rounded-pill");
+          sp.innerHTML = "ok";
+          li.appendChild(sp);
+          document.getElementById("theextensions").appendChild(li);
+          val.add_one_extension_from_str(urls[i], results[i]);
+        }
       }
       _callback();
     });
   }
   else {
+    const li = document.createElement("li");
+    li.classList.add("list-group-item");
+    li.classList.add("d-flex");
+    li.classList.add("justify-content-between");
+    li.classList.add("align-items-center");
+    li.innerHTML = "none";
+    document.getElementById("theextensions").appendChild(li);
     _callback();
   }
 }
@@ -178,7 +234,7 @@ function allvalidations(validator, fname) {
     document.getElementById('err_schema').className = "table-danger";
     document.getElementById('err_schema').children[1].innerHTML = re;
     isValid = false;
-    display_final_result(fname, isValid, hasWarnings);
+    display_final_result(isValid, hasWarnings);
     return;
   }
 
@@ -189,7 +245,7 @@ function allvalidations(validator, fname) {
     document.getElementById('err_ext_schema').className = "table-danger";
     document.getElementById('err_ext_schema').children[1].innerHTML = re;
     isValid = false;
-    display_final_result(fname, isValid, hasWarnings);
+    display_final_result(isValid, hasWarnings);
     return;
   }
 
@@ -221,7 +277,7 @@ function allvalidations(validator, fname) {
 
   if (isValid == false) {
     // console.log("falseeeee")
-    display_final_result(fname, isValid, hasWarnings);
+    display_final_result(isValid, hasWarnings);
     return;
   }
   //-- WARNINGS
@@ -250,7 +306,7 @@ function allvalidations(validator, fname) {
     hasWarnings = true;
   }     
   //-- FINAL RESULTS
-  display_final_result(fname, isValid, hasWarnings);
+  display_final_result(isValid, hasWarnings);
   console.log(re);  
 }
 

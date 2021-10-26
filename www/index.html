@@ -13,24 +13,21 @@
 
 <div class="container">
 
-  <h1 class="text-center">validation validation</h1>
 
   <form id="dropbox" class="my-form">
-    <p><img class="logo" src="img/cityjson_logo.svg" width="150"></p>
+    <p><img class="logo" src="img/cityjson_logo.svg"></p>
     <p>Drop a file to validate it</p>
     <input type="file" id="fileElem" accept=".json"  multiple style="display: none"/>
   </form>
 
      
-  <div class="alert alert-primary invisible" id="inputsummary" role="alert">
-    <h5></h5>
-    <p></p>
+  <h5><span class="badge bg-danger" id="theresult"></span></h5>
+  <div class="alert alert-secondary invisible" id="inputsummary" role="alert">
+    <h5 id="filename"></h5>
+    <p>Extensions:</p>
+    <ul id="theextensions" class="list-group">
+    </ul>
   </div>
-  <div class="alert invisible" id="theresult" role="alert">
-    <h5></h5>
-    <p></p>
-  </div>
-  
 
 
   <table id="tab-errors" class="table invisible">
