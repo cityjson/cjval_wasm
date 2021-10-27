@@ -20,8 +20,13 @@
     <input type="file" id="fileElem" accept=".json"  multiple style="display: none"/>
   </form>
 
+  <div class="alert alert-dark text-center" role="alert">
+    (<a href="https://github.com/cityjson/cjval">cjval</a> v0.3.0 is used)<br>
+    (files are never uploaded, validation is done locally)
+  </div>
+
      
-  <h5><span class="badge bg-danger" id="theresult"></span></h5>
+  <h3 class="text-center"><span class="badge bg-danger" id="theresult"></span></h3>
   <div class="alert alert-secondary invisible" id="inputsummary" role="alert">
     <p id="filename"></p>
     <p id="cjversion"></p>
