@@ -173,7 +173,7 @@ function download_all_extensions(val, _callback) {
       .then(y => y.text())
       .catch((error) => {
         console.error('Error:', error);
-        alert("Error: cannot dowload Extension (Cross-Origin Request Blocked)");
+        alert("Error: cannot dowload Extension (Cross-Origin Request Blocked). See https://github.com/cityjson/cjval/issues/1 to solve this.");
       })
     );
     console.log(promises);
