@@ -10,4 +10,4 @@
 
 ## Online demo
 
-[==> demo](https://hugoledoux.github.io/cjval_wasm/)
+[==> demo](https://validator.cityjson.org)
