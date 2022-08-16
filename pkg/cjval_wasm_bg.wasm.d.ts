@@ -4,6 +4,7 @@ export const memory: WebAssembly.Memory;
 export function __wbg_validator_free(a: number): void;
 export function validator_from_str(a: number, b: number): number;
 export function validator_get_input_cityjson_version(a: number): number;
+export function validator_get_cityjson_schema_version(a: number): number;
 export function validator_has_extensions(a: number): number;
 export function validator_get_extensions(a: number): number;
 export function validator_add_one_extension_from_str(a: number, b: number, c: number, d: number, e: number): number;

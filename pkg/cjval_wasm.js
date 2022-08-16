@@ -142,6 +142,13 @@ export class Validator {
     /**
     * @returns {any}
     */
+    get_cityjson_schema_version() {
+        var ret = wasm.validator_get_cityjson_schema_version(this.ptr);
+        return takeObject(ret);
+    }
+    /**
+    * @returns {any}
+    */
     has_extensions() {
         var ret = wasm.validator_has_extensions(this.ptr);
         return takeObject(ret);

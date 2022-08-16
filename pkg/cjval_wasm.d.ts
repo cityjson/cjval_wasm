@@ -16,6 +16,10 @@ export class Validator {
 /**
 * @returns {any}
 */
+  get_cityjson_schema_version(): any;
+/**
+* @returns {any}
+*/
   has_extensions(): any;
 /**
 * @returns {number}
@@ -68,6 +72,7 @@ export interface InitOutput {
   readonly __wbg_validator_free: (a: number) => void;
   readonly validator_from_str: (a: number, b: number) => number;
   readonly validator_get_input_cityjson_version: (a: number) => number;
+  readonly validator_get_cityjson_schema_version: (a: number) => number;
   readonly validator_has_extensions: (a: number) => number;
   readonly validator_get_extensions: (a: number) => number;
   readonly validator_add_one_extension_from_str: (a: number, b: number, c: number, d: number, e: number) => number;
