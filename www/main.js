@@ -94,9 +94,12 @@ async function handleFiles(files) {
       validator = Validator.from_str(reader.result);
       document.getElementById('err_json_syntax').className = "table-success";
       let cjv = validator.get_input_cityjson_version();
+      let cjschemav = validator.get_cityjson_schema_version();
       console.log(cjv);
+      console.log("ledoux");
+      console.log(cjschemav);
       if (cjv == 11){
-        document.getElementById('cjversion').innerHTML = "v1.1";
+        document.getElementById('cjversion').innerHTML = "CityJSON v1.1 (schemas used: v" + cjschemav + ")";
       } else if (cjv == 10) {
         document.getElementById('cjversion').innerHTML = "v1.0 (it would be a good idea to upgrade to v1.1)";
       } else {

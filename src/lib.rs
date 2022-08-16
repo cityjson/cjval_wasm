@@ -20,6 +20,11 @@ impl Validator {
         self.v.get_input_cityjson_version()
     }
 
+    pub fn get_cityjson_schema_version(&self) -> JsValue {
+        let re = self.v.get_cityjson_schema_version();
+        return JsValue::from_str(&re.to_string());
+    }
+
     pub fn has_extensions(&self) -> JsValue {
         let re = self.v.has_extensions();
         if re.is_none() {
