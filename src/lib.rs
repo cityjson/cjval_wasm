@@ -25,7 +25,7 @@ impl Validator {
         return JsValue::from_str(&re.to_string());
     }
 
-    pub fn has_extensions(&self) -> JsValue {
+    pub fn get_extensions(&self) -> JsValue {
         let re = self.v.has_extensions();
         if re.is_none() {
             return JsValue::NULL;
@@ -35,7 +35,7 @@ impl Validator {
         }
     }
 
-    pub fn get_extensions(&self) -> usize {
+    pub fn number_extensions(&self) -> usize {
         let re = self.v.get_extensions();
         return re.len();
     }
@@ -58,84 +58,92 @@ impl Validator {
     }
 
     //-- ERRORS
-    pub fn validate_schema(&self) -> JsValue {
+    pub fn validate_schema(&self) -> Result<(), JsValue> {
         let re = self.v.validate_schema();
-        if re.is_empty() {
-            return JsValue::NULL;
-        } else {
-            let s = re.join("\n");
-            return JsValue::from_str(&s.to_string());
+        match re {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                let s = e.join("\n");
+                return Err(JsValue::from_str(&s.to_string()));
+            }
         }
     }
 
-    pub fn validate_extensions(&self) -> JsValue {
+    pub fn validate_extensions(&self) -> Result<(), JsValue> {
         let re = self.v.validate_extensions();
-        if re.is_empty() {
-            return JsValue::NULL;
-        } else {
-            let s = re.join("\n");
-            return JsValue::from_str(&s.to_string());
+        match re {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                let s = e.join("\n");
+                return Err(JsValue::from_str(&s.to_string()));
+            }
         }
     }
 
-    pub fn parent_children_consistency(&self) -> JsValue {
+    pub fn parent_children_consistency(&self) -> Result<(), JsValue> {
         let re = self.v.parent_children_consistency();
-        if re.is_empty() {
-            return JsValue::NULL;
-        } else {
-            let s = re.join("\n");
-            return JsValue::from_str(&s.to_string());
+        match re {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                let s = e.join("\n");
+                return Err(JsValue::from_str(&s.to_string()));
+            }
         }
     }
 
-    pub fn wrong_vertex_index(&self) -> JsValue {
+    pub fn wrong_vertex_index(&self) -> Result<(), JsValue> {
         let re = self.v.wrong_vertex_index();
-        if re.is_empty() {
-            return JsValue::NULL;
-        } else {
-            let s = re.join("\n");
-            return JsValue::from_str(&s.to_string());
+        match re {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                let s = e.join("\n");
+                return Err(JsValue::from_str(&s.to_string()));
+            }
         }
     }
 
-    pub fn semantics_arrays(&self) -> JsValue {
+    pub fn semantics_arrays(&self) -> Result<(), JsValue> {
         let re = self.v.semantics_arrays();
-        if re.is_empty() {
-            return JsValue::NULL;
-        } else {
-            let s = re.join("\n");
-            return JsValue::from_str(&s.to_string());
+        match re {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                let s = e.join("\n");
+                return Err(JsValue::from_str(&s.to_string()));
+            }
         }
     }
 
     //-- WARNINGS
-    pub fn duplicate_vertices(&self) -> JsValue {
+    pub fn duplicate_vertices(&self) -> Result<(), JsValue> {
         let re = self.v.duplicate_vertices();
-        if re.is_empty() {
-            return JsValue::NULL;
-        } else {
-            let s = re.join("\n");
-            return JsValue::from_str(&s.to_string());
+        match re {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                let s = e.join("\n");
+                return Err(JsValue::from_str(&s.to_string()));
+            }
         }
     }
 
-    pub fn extra_root_properties(&self) -> JsValue {
+    pub fn extra_root_properties(&self) -> Result<(), JsValue> {
         let re = self.v.extra_root_properties();
-        if re.is_empty() {
-            return JsValue::NULL;
-        } else {
-            let s = re.join("\n");
-            return JsValue::from_str(&s.to_string());
+        match re {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                let s = e.join("\n");
+                return Err(JsValue::from_str(&s.to_string()));
+            }
         }
     }
 
-    pub fn unused_vertices(&self) -> JsValue {
+    pub fn unused_vertices(&self) -> Result<(), JsValue> {
         let re = self.v.unused_vertices();
-        if re.is_empty() {
-            return JsValue::NULL;
-        } else {
-            let s = re.join("\n");
-            return JsValue::from_str(&s.to_string());
+        match re {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                let s = e.join("\n");
+                return Err(JsValue::from_str(&s.to_string()));
+            }
         }
     }
 }

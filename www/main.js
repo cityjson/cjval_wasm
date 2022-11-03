@@ -96,7 +96,6 @@ async function handleFiles(files) {
       let cjv = validator.get_input_cityjson_version();
       let cjschemav = validator.get_cityjson_schema_version();
       console.log(cjv);
-      console.log("ledoux");
       console.log(cjschemav);
       if (cjv == 11){
         document.getElementById('cjversion').innerHTML = "CityJSON v1.1 (schemas used: v" + cjschemav + ")";
@@ -106,11 +105,11 @@ async function handleFiles(files) {
         document.getElementById('cjversion').innerHTML = "version <1.0 (no validation possible)";
       }
     } catch (error) {
+      console.log("--error--");
       console.log(error);
       document.getElementById('err_json_syntax').className = "table-danger";
       document.getElementById('err_json_syntax').children[1].innerHTML = error;
-      isValid = false;
-      display_final_result(isValid, hasWarnings);
+      display_final_result(false, false);
       return;
     }
     //-- fetch all extensions 
@@ -157,7 +156,7 @@ function display_final_result(isValid, hasWarnings) {
 
 
 function download_all_extensions(val, _callback) {
-  let re = val.has_extensions();
+  let re = val.get_extensions();
   if (re != null) {
     let urls = re.split('\n');
     // const promises = [];
@@ -234,34 +233,36 @@ function download_all_extensions(val, _callback) {
 
 function allvalidations(validator, fname) {
   console.log("all validations");
-  console.log("# exts1: ", validator.get_extensions());
+  console.log("# extensions in the file: ", validator.number_extensions());
   var isValid = true;
   var hasWarnings = false;
   //-- validate_schema
-  let re = validator.validate_schema();
-  if (re == null) {
+  try {
+    validator.validate_schema();
     document.getElementById('err_schema').className = "table-success";
-  } else {
+  } 
+  catch(e) {
     document.getElementById('err_schema').className = "table-danger";
-    document.getElementById('err_schema').children[1].innerHTML = re;
+    document.getElementById('err_schema').children[1].innerHTML = e;
     isValid = false;
     display_final_result(isValid, hasWarnings);
     return;
   }
 
   if (validator.get_input_cityjson_version() == 11) {
-    re = validator.validate_extensions();
-    if (re == null) {
+    try {
+      validator.validate_extensions();
       document.getElementById('err_ext_schema').className = "table-success";
-    } else {
+    } 
+    catch(e) {
       document.getElementById('err_ext_schema').className = "table-danger";
-      document.getElementById('err_ext_schema').children[1].innerHTML = re;
+      document.getElementById('err_ext_schema').children[1].innerHTML = e;
       isValid = false;
       display_final_result(isValid, hasWarnings);
       return;
     }
   } else {
-    if (validator.get_extensions() > 0) {
+    if (validator.number_extensions() > 0) {
       document.getElementById('err_ext_schema').className = "table-danger";
       document.getElementById('err_ext_schema').children[1].innerHTML = "validation of Extensions is not supported in v1.0, upgrade to v1.1";
       isValid = false;
@@ -270,29 +271,36 @@ function allvalidations(validator, fname) {
     }
   }
 
-  //-- wrong vertex index
-  re = validator.wrong_vertex_index();
-  if (re == null) {
+  //-- wrong_vertex_index
+  try {
+    validator.wrong_vertex_index();
     document.getElementById('err_wrong_vertex_index').className = "table-success";
-  } else {
+  }
+  catch(e) {
     document.getElementById('err_wrong_vertex_index').className = "table-danger";
-    document.getElementById('err_wrong_vertex_index').children[1].innerHTML = re;
+    document.getElementById('err_wrong_vertex_index').children[1].innerHTML = e;
     isValid = false;
   }
-  re = validator.parent_children_consistency();
-  if (re == null) {
+
+  //-- parent_children_consistency
+  try {
+    validator.parent_children_consistency();
     document.getElementById('err_parents_children_consistency').className = "table-success";
-  } else {
+  } 
+  catch(e) {
     document.getElementById('err_parents_children_consistency').className = "table-danger";
-    document.getElementById('err_parents_children_consistency').children[1].innerHTML = re;
+    document.getElementById('err_parents_children_consistency').children[1].innerHTML = e;
     isValid = false;
   }
-  re = validator.semantics_arrays();
-  if (re == null) {
+
+  //-- semantics_arrays
+  try {
+    validator.semantics_arrays();
     document.getElementById('err_semantics_arrays').className = "table-success";
-  } else {
+  }
+  catch(e) {
     document.getElementById('err_semantics_arrays').className = "table-danger";
-    document.getElementById('err_semantics_arrays').children[1].innerHTML = re;
+    document.getElementById('err_semantics_arrays').children[1].innerHTML = e;
     isValid = false;
   }
 
@@ -301,34 +309,42 @@ function allvalidations(validator, fname) {
     display_final_result(isValid, hasWarnings);
     return;
   }
+
   //-- WARNINGS
-  re = validator.duplicate_vertices();
-  if (re == null) {
+  
+  //-- duplicate_vertices
+  try {
+    validator.duplicate_vertices();
     document.getElementById('war_duplicate_vertices').className = "table-success";
-  } else {
+  } catch(e) {
     document.getElementById('war_duplicate_vertices').className = "table-warning";
-    document.getElementById('war_duplicate_vertices').children[1].innerHTML = re;
+    document.getElementById('war_duplicate_vertices').children[1].innerHTML = e;
     hasWarnings = true;
   }
-  re = validator.extra_root_properties();
-  if (re == null) {
+
+  //-- extra_root_properties
+  try {
+    validator.extra_root_properties();
     document.getElementById('war_extra_root_properties').className = "table-success";
-  } else {
+  } 
+  catch(e) {
     document.getElementById('war_extra_root_properties').className = "table-warning";
-    document.getElementById('war_extra_root_properties').children[1].innerHTML = re;
+    document.getElementById('war_extra_root_properties').children[1].innerHTML = e;
     hasWarnings = true;
   }    
-  re = validator.unused_vertices();
-  if (re == null) {
+
+  //-- unused_vertices
+  try {
+    validator.unused_vertices();
     document.getElementById('war_unused_vertices').className = "table-success";
-  } else {
+  } 
+  catch(e) {
     document.getElementById('war_unused_vertices').className = "table-warning";
-    document.getElementById('war_unused_vertices').children[1].innerHTML = re;
+    document.getElementById('war_unused_vertices').children[1].innerHTML = e;
     hasWarnings = true;
   }     
   //-- FINAL RESULTS
-  display_final_result(isValid, hasWarnings);
-  console.log(re);  
+  display_final_result(isValid, hasWarnings); 
 }
 
 
