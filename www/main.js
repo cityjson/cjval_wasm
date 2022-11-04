@@ -166,54 +166,46 @@ function download_all_extensions(val, _callback) {
   let re = val.get_extensions();
   if (re != null) {
     let urls = re.split('\n');
-    // const promises = [];
-    // for (let i = 0; i < urls.length; i++) {
-    //   let a = 
-    //     fetch(urls[i])
-    //     .then(y => y.text())
-    //     .catch((error) => {
-    //       console.error('Error:', error);
-    //     }
-    //   );
-    //   promises.push(a);
-    // }
     var promises = urls.map(url => 
       fetch(url)
       .then(y => y.text())
       .catch((error) => {
         console.error('Error:', error);
-        alert("Error: cannot dowload Extension (Cross-Origin Request Blocked). See https://github.com/cityjson/cjval/issues/1 to solve this.");
       })
     );
     console.log(promises);
     Promise.all(promises).then(results => {
       for (let i = 0; i < results.length; i++) {
-        if (results[i] == "404: Not Found") {
-          console.log("404:", urls[i]);
-          const li = document.createElement("li");
-          li.classList.add("list-group-item");
-          li.classList.add("d-flex");
-          li.classList.add("justify-content-between");
-          li.classList.add("align-items-center");
-          li.innerHTML = urls[i];
-          const sp = document.createElement("span");
-          sp.classList.add("badge");
+        // console.log("results", results[i])
+        const li = document.createElement("li");
+        li.classList.add("list-group-item");
+        li.classList.add("d-flex");
+        li.classList.add("justify-content-between");
+        li.classList.add("align-items-center");
+        li.innerHTML = urls[i];
+        const sp = document.createElement("span");
+        sp.classList.add("badge");
+        if (typeof results[i] === 'undefined') {
           sp.classList.add("bg-danger");
           sp.classList.add("rounded-pill");
           sp.innerHTML = "error";
           li.appendChild(sp);
           document.getElementById("theextensions").appendChild(li);
+          document.getElementById('err_ext_schema').className = "table-danger";
+          document.getElementById('err_ext_schema').children[1].innerHTML = "Cannot download Extension schema because of CORS, (<a href='https://github.com/cityjson/cjval/issues/1'>how to fix</a>)";
+          display_final_result(false, false);
+          return;
+        } else if (results[i] == "404: Not Found") {
+          sp.classList.add("bg-danger");
+          sp.classList.add("rounded-pill");
+          sp.innerHTML = "error";
+          li.appendChild(sp);
+          document.getElementById("theextensions").appendChild(li);
+          document.getElementById('err_ext_schema').className = "table-danger";
+          document.getElementById('err_ext_schema').children[1].innerHTML = "Extension schemas cannot be found.";
           display_final_result(false, false);
           return;
         } else {
-          const li = document.createElement("li");
-          li.classList.add("list-group-item");
-          li.classList.add("d-flex");
-          li.classList.add("justify-content-between");
-          li.classList.add("align-items-center");
-          li.innerHTML = urls[i];
-          const sp = document.createElement("span");
-          sp.classList.add("badge");
           sp.classList.add("bg-success");
           sp.classList.add("rounded-pill");
           sp.innerHTML = "ok";
@@ -226,6 +218,7 @@ function download_all_extensions(val, _callback) {
     });
   }
   else {
+    console.log("promise else");
     const li = document.createElement("li");
     li.classList.add("list-group-item");
     li.classList.add("d-flex");
@@ -353,11 +346,5 @@ function allvalidations(validator, fname) {
   //-- FINAL RESULTS
   display_final_result(isValid, hasWarnings); 
 }
-
-
-
-
-
-
 
 main();
