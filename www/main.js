@@ -97,12 +97,19 @@ async function handleFiles(files) {
       let cjschemav = validator.get_cityjson_schema_version();
       console.log(cjv);
       console.log(cjschemav);
-      if (cjv == 11){
-        document.getElementById('cjversion').innerHTML = "CityJSON v1.1 (schemas used: v" + cjschemav + ")";
-      } else if (cjv == 10) {
-        document.getElementById('cjversion').innerHTML = "v1.0 (it would be a good idea to upgrade to v1.1)";
+      let cjf = validator.is_cityjsonfeature();
+      if (cjf == false) {
+        if (cjv == 11){
+          document.getElementById('cjversion').innerHTML = "CityJSON v1.1 (schemas used: v" + cjschemav + ")";
+        } else if (cjv == 10) {
+          document.getElementById('cjversion').innerHTML = "v1.0 (it would be a good idea to upgrade to v1.1)";
+        } else {
+          document.getElementById('cjversion').innerHTML = "version <1.0 (no validation possible)";
+        }
       } else {
-        document.getElementById('cjversion').innerHTML = "version <1.0 (no validation possible)";
+        if (cjv == 11){
+          document.getElementById('cjversion').innerHTML = "CityJSONFeature v1.1 (schemas used: v" + cjschemav + ")";
+        }
       }
     } catch (error) {
       console.log("--error--");

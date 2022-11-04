@@ -25,6 +25,10 @@ impl Validator {
         return JsValue::from_str(&re.to_string());
     }
 
+    pub fn is_cityjsonfeature(&self) -> JsValue {
+        return JsValue::from_bool(self.v.is_cityjsonfeature());
+    }
+
     pub fn get_extensions(&self) -> JsValue {
         let re = self.v.has_extensions();
         if re.is_none() {
