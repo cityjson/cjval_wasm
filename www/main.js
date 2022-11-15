@@ -92,6 +92,7 @@ async function handleFiles(files) {
     let validator;
     try {
       validator = Validator.from_str(reader.result);
+      validator.validate();
       document.getElementById('err_json_syntax').className = "table-success";
       let cjv = validator.get_input_cityjson_version();
       let cjschemav = validator.get_cityjson_schema_version();
@@ -163,7 +164,7 @@ function display_final_result(isValid, hasWarnings) {
 
 
 function download_all_extensions(val, _callback) {
-  let re = val.get_extensions();
+  let re = val.get_extensions_urls();
   if (re != null) {
     let urls = re.split('\n');
     var promises = urls.map(url => 
@@ -238,7 +239,7 @@ function allvalidations(validator, fname) {
   var hasWarnings = false;
   //-- validate_schema
   try {
-    validator.validate_schema();
+    validator.schema();
     document.getElementById('err_schema').className = "table-success";
   } 
   catch(e) {
@@ -251,7 +252,7 @@ function allvalidations(validator, fname) {
 
   if (validator.get_input_cityjson_version() == 11) {
     try {
-      validator.validate_extensions();
+      validator.extensions();
       document.getElementById('err_ext_schema').className = "table-success";
     } 
     catch(e) {
@@ -282,9 +283,9 @@ function allvalidations(validator, fname) {
     isValid = false;
   }
 
-  //-- parent_children_consistency
+  //-- parents_children_consistency
   try {
-    validator.parent_children_consistency();
+    validator.parents_children_consistency();
     document.getElementById('err_parents_children_consistency').className = "table-success";
   } 
   catch(e) {

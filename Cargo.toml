@@ -11,6 +11,7 @@ crate-type = ["cdylib"]
 [dependencies]
 wasm-bindgen = "0.2.74"
 parking_lot_core = "=0.8.0"
+indexmap = "1.9.1"
 
 [dependencies.cjval]
 # version = "0.4.3"
