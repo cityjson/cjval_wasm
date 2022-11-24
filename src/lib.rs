@@ -68,6 +68,15 @@ impl Validator {
     }
 
     //-- ERRORS
+    pub fn json_syntax(&self) -> Result<(), JsValue> {
+        let summ = &self.valsumm["json_syntax"];
+        if summ.has_errors() == false {
+            return Ok(());
+        }
+        let s = format!("{}", summ);
+        return Err(JsValue::from_str(&s.to_string()));
+    }
+
     pub fn schema(&self) -> Result<(), JsValue> {
         let summ = &self.valsumm["schema"];
         if summ.has_errors() == false {

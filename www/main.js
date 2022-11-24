@@ -90,41 +90,31 @@ async function handleFiles(files) {
   document.getElementById('inputsummary').classList.remove('invisible');
   reader.onload = function() {
     let validator;
-    try {
-      validator = Validator.from_str(reader.result);
-      validator.validate();
-      document.getElementById('err_json_syntax').className = "table-success";
-      let cjv = validator.get_input_cityjson_version();
-      let cjschemav = validator.get_cityjson_schema_version();
-      console.log(cjv);
-      console.log(cjschemav);
-      let cjf = validator.is_cityjsonfeature();
-      if (cjf == false) {
-        if (cjv == 11){
-          document.getElementById('cjversion').innerHTML = "CityJSON v1.1 (schemas used: v" + cjschemav + ")";
-        } else if (cjv == 10) {
-          document.getElementById('cjversion').innerHTML = "v1.0 (it would be a good idea to upgrade to v1.1)";
-        } else {
-          document.getElementById('cjversion').innerHTML = "version <1.0 (no validation possible)";
-        }
+    validator = Validator.from_str(reader.result);
+    let cjv = validator.get_input_cityjson_version();
+    let cjschemav = validator.get_cityjson_schema_version();
+    console.log(cjv);
+    console.log(cjschemav);
+    let cjf = validator.is_cityjsonfeature();
+    if (cjf == false) {
+      if (cjv == 11){
+        document.getElementById('cjversion').innerHTML = "CityJSON v1.1 (schemas used: v" + cjschemav + ")";
+      } else if (cjv == 10) {
+        document.getElementById('cjversion').innerHTML = "v1.0 (it would be a good idea to upgrade to v1.1)";
       } else {
-        if (cjv == 11){
-          document.getElementById('cjversion').innerHTML = "CityJSONFeature v1.1 (schemas used: v" + cjschemav + ")";
-        }
+        document.getElementById('cjversion').innerHTML = "version <1.0 (no validation possible)";
       }
-    } catch (error) {
-      console.log("--error--");
-      console.log(error);
-      document.getElementById('err_json_syntax').className = "table-danger";
-      document.getElementById('err_json_syntax').children[1].innerHTML = error;
-      display_final_result(false, false);
-      return;
+    } else {
+      if (cjv == 11){
+        document.getElementById('cjversion').innerHTML = "CityJSONFeature v1.1 (schemas used: v" + cjschemav + ")";
+      }
     }
     //-- fetch all extensions 
+    console.log("before download_all_extensions");
     download_all_extensions(validator, () => {
       allvalidations(validator, f.name);
     });
-    
+  
   }
   $("#fileElem").val("")
 }
@@ -174,10 +164,10 @@ function download_all_extensions(val, _callback) {
         console.error('Error:', error);
       })
     );
-    console.log(promises);
     Promise.all(promises).then(results => {
       for (let i = 0; i < results.length; i++) {
-        // console.log("results", results[i])
+        // console.log(results[i]);
+        // console.log("results", results[i]);
         const li = document.createElement("li");
         li.classList.add("list-group-item");
         li.classList.add("d-flex");
@@ -207,16 +197,38 @@ function download_all_extensions(val, _callback) {
           display_final_result(false, false);
           return;
         } else {
-          sp.classList.add("bg-success");
-          sp.classList.add("rounded-pill");
-          sp.innerHTML = "ok";
-          li.appendChild(sp);
-          document.getElementById("theextensions").appendChild(li);
-          val.add_one_extension_from_str(urls[i], results[i]);
+          let re = val.add_one_extension_from_str(urls[i], results[i]);
+          if (re == null) {
+            sp.classList.add("bg-success");
+            sp.classList.add("rounded-pill");
+            sp.innerHTML = "ok";
+            li.appendChild(sp);
+            document.getElementById("theextensions").appendChild(li);
+            console.log("Extension loaded successfully");
+          } else {
+            sp.classList.add("bg-danger");
+            sp.classList.add("rounded-pill");
+            sp.innerHTML = "error";
+            li.appendChild(sp);
+            document.getElementById("theextensions").appendChild(li);
+            document.getElementById('err_ext_schema').className = "table-danger";
+            let ss = `Extension: issues with parsing schema [${re}].`;
+            document.getElementById('err_ext_schema').children[1].innerHTML = ss;
+            // document.getElementById('err_ext_schema').children[1].innerHTML = "Extension: issues with parsing schema [${re}].";
+            display_final_result(false, false);
+            return;
+          }
+          // results[i].text().then(function(cc) {
+          //   console.log("cc");
+          //   // console.log(cc);
+          //   let ff = val.add_one_extension_from_str(urls[i], cc);
+          //   console.log(ff);
+          // });
         }
       }
       _callback();
     });
+    console.log("promises done.");
   }
   else {
     console.log("promise else");
@@ -237,6 +249,19 @@ function allvalidations(validator, fname) {
   console.log("# extensions in the file: ", validator.number_extensions());
   var isValid = true;
   var hasWarnings = false;
+  validator.validate();
+  //-- syntax
+  try {
+    validator.json_syntax();
+    document.getElementById('err_json_syntax').className = "table-success";
+  } 
+  catch(e) {
+    document.getElementById('err_json_syntax').className = "table-danger";
+    document.getElementById('err_json_syntax').children[1].innerHTML = e;
+    isValid = false;
+    display_final_result(isValid, hasWarnings);
+    return;
+  }
   //-- validate_schema
   try {
     validator.schema();
