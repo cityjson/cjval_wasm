@@ -20,49 +20,51 @@ export class Validator {
 /**
 * @returns {any}
 */
-  has_extensions(): any;
+  is_cityjsonfeature(): any;
+/**
+* @returns {any}
+*/
+  get_extensions_urls(): any;
+/**
+*/
+  validate(): void;
 /**
 * @returns {number}
 */
-  get_extensions(): number;
+  number_extensions(): number;
 /**
-* @param {string} ext_schema_name
+* @param {string} _ext_schema_name
 * @param {string} ext_schema_str
 * @returns {any}
 */
-  add_one_extension_from_str(ext_schema_name: string, ext_schema_str: string): any;
+  add_one_extension_from_str(_ext_schema_name: string, ext_schema_str: string): any;
 /**
-* @returns {any}
 */
-  validate_schema(): any;
+  json_syntax(): void;
 /**
-* @returns {any}
 */
-  validate_extensions(): any;
+  schema(): void;
 /**
-* @returns {any}
 */
-  parent_children_consistency(): any;
+  extensions(): void;
 /**
-* @returns {any}
 */
-  wrong_vertex_index(): any;
+  parents_children_consistency(): void;
 /**
-* @returns {any}
 */
-  semantics_arrays(): any;
+  wrong_vertex_index(): void;
 /**
-* @returns {any}
 */
-  duplicate_vertices(): any;
+  semantics_arrays(): void;
 /**
-* @returns {any}
 */
-  extra_root_properties(): any;
+  duplicate_vertices(): void;
 /**
-* @returns {any}
 */
-  unused_vertices(): any;
+  extra_root_properties(): void;
+/**
+*/
+  unused_vertices(): void;
 }
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -73,17 +75,20 @@ export interface InitOutput {
   readonly validator_from_str: (a: number, b: number) => number;
   readonly validator_get_input_cityjson_version: (a: number) => number;
   readonly validator_get_cityjson_schema_version: (a: number) => number;
-  readonly validator_has_extensions: (a: number) => number;
-  readonly validator_get_extensions: (a: number) => number;
+  readonly validator_is_cityjsonfeature: (a: number) => number;
+  readonly validator_get_extensions_urls: (a: number) => number;
+  readonly validator_validate: (a: number) => void;
+  readonly validator_number_extensions: (a: number) => number;
   readonly validator_add_one_extension_from_str: (a: number, b: number, c: number, d: number, e: number) => number;
-  readonly validator_validate_schema: (a: number) => number;
-  readonly validator_validate_extensions: (a: number) => number;
-  readonly validator_parent_children_consistency: (a: number) => number;
-  readonly validator_wrong_vertex_index: (a: number) => number;
-  readonly validator_semantics_arrays: (a: number) => number;
-  readonly validator_duplicate_vertices: (a: number) => number;
-  readonly validator_extra_root_properties: (a: number) => number;
-  readonly validator_unused_vertices: (a: number) => number;
+  readonly validator_json_syntax: (a: number) => void;
+  readonly validator_schema: (a: number) => void;
+  readonly validator_extensions: (a: number) => void;
+  readonly validator_parents_children_consistency: (a: number) => void;
+  readonly validator_wrong_vertex_index: (a: number) => void;
+  readonly validator_semantics_arrays: (a: number) => void;
+  readonly validator_duplicate_vertices: (a: number) => void;
+  readonly validator_extra_root_properties: (a: number) => void;
+  readonly validator_unused_vertices: (a: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
 }

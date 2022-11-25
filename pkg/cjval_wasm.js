@@ -149,24 +149,36 @@ export class Validator {
     /**
     * @returns {any}
     */
-    has_extensions() {
-        var ret = wasm.validator_has_extensions(this.ptr);
+    is_cityjsonfeature() {
+        var ret = wasm.validator_is_cityjsonfeature(this.ptr);
         return takeObject(ret);
+    }
+    /**
+    * @returns {any}
+    */
+    get_extensions_urls() {
+        var ret = wasm.validator_get_extensions_urls(this.ptr);
+        return takeObject(ret);
+    }
+    /**
+    */
+    validate() {
+        wasm.validator_validate(this.ptr);
     }
     /**
     * @returns {number}
     */
-    get_extensions() {
-        var ret = wasm.validator_get_extensions(this.ptr);
+    number_extensions() {
+        var ret = wasm.validator_number_extensions(this.ptr);
         return ret >>> 0;
     }
     /**
-    * @param {string} ext_schema_name
+    * @param {string} _ext_schema_name
     * @param {string} ext_schema_str
     * @returns {any}
     */
-    add_one_extension_from_str(ext_schema_name, ext_schema_str) {
-        var ptr0 = passStringToWasm0(ext_schema_name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    add_one_extension_from_str(_ext_schema_name, ext_schema_str) {
+        var ptr0 = passStringToWasm0(_ext_schema_name, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len0 = WASM_VECTOR_LEN;
         var ptr1 = passStringToWasm0(ext_schema_str, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         var len1 = WASM_VECTOR_LEN;
@@ -174,60 +186,49 @@ export class Validator {
         return takeObject(ret);
     }
     /**
-    * @returns {any}
     */
-    validate_schema() {
-        var ret = wasm.validator_validate_schema(this.ptr);
-        return takeObject(ret);
+    json_syntax() {
+        wasm.validator_json_syntax(this.ptr);
     }
     /**
-    * @returns {any}
     */
-    validate_extensions() {
-        var ret = wasm.validator_validate_extensions(this.ptr);
-        return takeObject(ret);
+    schema() {
+        wasm.validator_schema(this.ptr);
     }
     /**
-    * @returns {any}
     */
-    parent_children_consistency() {
-        var ret = wasm.validator_parent_children_consistency(this.ptr);
-        return takeObject(ret);
+    extensions() {
+        wasm.validator_extensions(this.ptr);
     }
     /**
-    * @returns {any}
+    */
+    parents_children_consistency() {
+        wasm.validator_parents_children_consistency(this.ptr);
+    }
+    /**
     */
     wrong_vertex_index() {
-        var ret = wasm.validator_wrong_vertex_index(this.ptr);
-        return takeObject(ret);
+        wasm.validator_wrong_vertex_index(this.ptr);
     }
     /**
-    * @returns {any}
     */
     semantics_arrays() {
-        var ret = wasm.validator_semantics_arrays(this.ptr);
-        return takeObject(ret);
+        wasm.validator_semantics_arrays(this.ptr);
     }
     /**
-    * @returns {any}
     */
     duplicate_vertices() {
-        var ret = wasm.validator_duplicate_vertices(this.ptr);
-        return takeObject(ret);
+        wasm.validator_duplicate_vertices(this.ptr);
     }
     /**
-    * @returns {any}
     */
     extra_root_properties() {
-        var ret = wasm.validator_extra_root_properties(this.ptr);
-        return takeObject(ret);
+        wasm.validator_extra_root_properties(this.ptr);
     }
     /**
-    * @returns {any}
     */
     unused_vertices() {
-        var ret = wasm.validator_unused_vertices(this.ptr);
-        return takeObject(ret);
+        wasm.validator_unused_vertices(this.ptr);
     }
 }
 

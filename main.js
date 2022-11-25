@@ -90,14 +90,13 @@ async function handleFiles(files) {
   document.getElementById('inputsummary').classList.remove('invisible');
   reader.onload = function() {
     let validator;
-    try {
-      validator = Validator.from_str(reader.result);
-      document.getElementById('err_json_syntax').className = "table-success";
-      let cjv = validator.get_input_cityjson_version();
-      let cjschemav = validator.get_cityjson_schema_version();
-      console.log(cjv);
-      console.log("ledoux");
-      console.log(cjschemav);
+    validator = Validator.from_str(reader.result);
+    let cjv = validator.get_input_cityjson_version();
+    let cjschemav = validator.get_cityjson_schema_version();
+    console.log(cjv);
+    console.log(cjschemav);
+    let cjf = validator.is_cityjsonfeature();
+    if (cjf == false) {
       if (cjv == 11){
         document.getElementById('cjversion').innerHTML = "CityJSON v1.1 (schemas used: v" + cjschemav + ")";
       } else if (cjv == 10) {
@@ -105,19 +104,17 @@ async function handleFiles(files) {
       } else {
         document.getElementById('cjversion').innerHTML = "version <1.0 (no validation possible)";
       }
-    } catch (error) {
-      console.log(error);
-      document.getElementById('err_json_syntax').className = "table-danger";
-      document.getElementById('err_json_syntax').children[1].innerHTML = error;
-      isValid = false;
-      display_final_result(isValid, hasWarnings);
-      return;
+    } else {
+      if (cjv == 11){
+        document.getElementById('cjversion').innerHTML = "CityJSONFeature v1.1 (schemas used: v" + cjschemav + ")";
+      }
     }
     //-- fetch all extensions 
+    console.log("before download_all_extensions");
     download_all_extensions(validator, () => {
       allvalidations(validator, f.name);
     });
-    
+  
   }
   $("#fileElem").val("")
 }
@@ -157,69 +154,84 @@ function display_final_result(isValid, hasWarnings) {
 
 
 function download_all_extensions(val, _callback) {
-  let re = val.has_extensions();
+  let re = val.get_extensions_urls();
   if (re != null) {
     let urls = re.split('\n');
-    // const promises = [];
-    // for (let i = 0; i < urls.length; i++) {
-    //   let a = 
-    //     fetch(urls[i])
-    //     .then(y => y.text())
-    //     .catch((error) => {
-    //       console.error('Error:', error);
-    //     }
-    //   );
-    //   promises.push(a);
-    // }
     var promises = urls.map(url => 
       fetch(url)
       .then(y => y.text())
       .catch((error) => {
         console.error('Error:', error);
-        alert("Error: cannot dowload Extension (Cross-Origin Request Blocked). See https://github.com/cityjson/cjval/issues/1 to solve this.");
       })
     );
-    console.log(promises);
     Promise.all(promises).then(results => {
       for (let i = 0; i < results.length; i++) {
-        if (results[i] == "404: Not Found") {
-          console.log("404:", urls[i]);
-          const li = document.createElement("li");
-          li.classList.add("list-group-item");
-          li.classList.add("d-flex");
-          li.classList.add("justify-content-between");
-          li.classList.add("align-items-center");
-          li.innerHTML = urls[i];
-          const sp = document.createElement("span");
-          sp.classList.add("badge");
+        // console.log(results[i]);
+        // console.log("results", results[i]);
+        const li = document.createElement("li");
+        li.classList.add("list-group-item");
+        li.classList.add("d-flex");
+        li.classList.add("justify-content-between");
+        li.classList.add("align-items-center");
+        li.innerHTML = urls[i];
+        const sp = document.createElement("span");
+        sp.classList.add("badge");
+        if (typeof results[i] === 'undefined') {
           sp.classList.add("bg-danger");
           sp.classList.add("rounded-pill");
           sp.innerHTML = "error";
           li.appendChild(sp);
           document.getElementById("theextensions").appendChild(li);
+          document.getElementById('err_ext_schema').className = "table-danger";
+          document.getElementById('err_ext_schema').children[1].innerHTML = "Cannot download Extension schema because of CORS, (<a href='https://github.com/cityjson/cjval/issues/1'>how to fix</a>)";
+          display_final_result(false, false);
+          return;
+        } else if (results[i] == "404: Not Found") {
+          sp.classList.add("bg-danger");
+          sp.classList.add("rounded-pill");
+          sp.innerHTML = "error";
+          li.appendChild(sp);
+          document.getElementById("theextensions").appendChild(li);
+          document.getElementById('err_ext_schema').className = "table-danger";
+          document.getElementById('err_ext_schema').children[1].innerHTML = "Extension schemas cannot be found.";
           display_final_result(false, false);
           return;
         } else {
-          const li = document.createElement("li");
-          li.classList.add("list-group-item");
-          li.classList.add("d-flex");
-          li.classList.add("justify-content-between");
-          li.classList.add("align-items-center");
-          li.innerHTML = urls[i];
-          const sp = document.createElement("span");
-          sp.classList.add("badge");
-          sp.classList.add("bg-success");
-          sp.classList.add("rounded-pill");
-          sp.innerHTML = "ok";
-          li.appendChild(sp);
-          document.getElementById("theextensions").appendChild(li);
-          val.add_one_extension_from_str(urls[i], results[i]);
+          let re = val.add_one_extension_from_str(urls[i], results[i]);
+          if (re == null) {
+            sp.classList.add("bg-success");
+            sp.classList.add("rounded-pill");
+            sp.innerHTML = "ok";
+            li.appendChild(sp);
+            document.getElementById("theextensions").appendChild(li);
+            console.log("Extension loaded successfully");
+          } else {
+            sp.classList.add("bg-danger");
+            sp.classList.add("rounded-pill");
+            sp.innerHTML = "error";
+            li.appendChild(sp);
+            document.getElementById("theextensions").appendChild(li);
+            document.getElementById('err_ext_schema').className = "table-danger";
+            let ss = `Extension: issues with parsing schema [${re}].`;
+            document.getElementById('err_ext_schema').children[1].innerHTML = ss;
+            // document.getElementById('err_ext_schema').children[1].innerHTML = "Extension: issues with parsing schema [${re}].";
+            display_final_result(false, false);
+            return;
+          }
+          // results[i].text().then(function(cc) {
+          //   console.log("cc");
+          //   // console.log(cc);
+          //   let ff = val.add_one_extension_from_str(urls[i], cc);
+          //   console.log(ff);
+          // });
         }
       }
       _callback();
     });
+    console.log("promises done.");
   }
   else {
+    console.log("promise else");
     const li = document.createElement("li");
     li.classList.add("list-group-item");
     li.classList.add("d-flex");
@@ -234,34 +246,49 @@ function download_all_extensions(val, _callback) {
 
 function allvalidations(validator, fname) {
   console.log("all validations");
-  console.log("# exts1: ", validator.get_extensions());
+  console.log("# extensions in the file: ", validator.number_extensions());
   var isValid = true;
   var hasWarnings = false;
+  validator.validate();
+  //-- syntax
+  try {
+    validator.json_syntax();
+    document.getElementById('err_json_syntax').className = "table-success";
+  } 
+  catch(e) {
+    document.getElementById('err_json_syntax').className = "table-danger";
+    document.getElementById('err_json_syntax').children[1].innerHTML = e;
+    isValid = false;
+    display_final_result(isValid, hasWarnings);
+    return;
+  }
   //-- validate_schema
-  let re = validator.validate_schema();
-  if (re == null) {
+  try {
+    validator.schema();
     document.getElementById('err_schema').className = "table-success";
-  } else {
+  } 
+  catch(e) {
     document.getElementById('err_schema').className = "table-danger";
-    document.getElementById('err_schema').children[1].innerHTML = re;
+    document.getElementById('err_schema').children[1].innerHTML = e;
     isValid = false;
     display_final_result(isValid, hasWarnings);
     return;
   }
 
   if (validator.get_input_cityjson_version() == 11) {
-    re = validator.validate_extensions();
-    if (re == null) {
+    try {
+      validator.extensions();
       document.getElementById('err_ext_schema').className = "table-success";
-    } else {
+    } 
+    catch(e) {
       document.getElementById('err_ext_schema').className = "table-danger";
-      document.getElementById('err_ext_schema').children[1].innerHTML = re;
+      document.getElementById('err_ext_schema').children[1].innerHTML = e;
       isValid = false;
       display_final_result(isValid, hasWarnings);
       return;
     }
   } else {
-    if (validator.get_extensions() > 0) {
+    if (validator.number_extensions() > 0) {
       document.getElementById('err_ext_schema').className = "table-danger";
       document.getElementById('err_ext_schema').children[1].innerHTML = "validation of Extensions is not supported in v1.0, upgrade to v1.1";
       isValid = false;
@@ -270,29 +297,36 @@ function allvalidations(validator, fname) {
     }
   }
 
-  //-- wrong vertex index
-  re = validator.wrong_vertex_index();
-  if (re == null) {
+  //-- wrong_vertex_index
+  try {
+    validator.wrong_vertex_index();
     document.getElementById('err_wrong_vertex_index').className = "table-success";
-  } else {
+  }
+  catch(e) {
     document.getElementById('err_wrong_vertex_index').className = "table-danger";
-    document.getElementById('err_wrong_vertex_index').children[1].innerHTML = re;
+    document.getElementById('err_wrong_vertex_index').children[1].innerHTML = e;
     isValid = false;
   }
-  re = validator.parent_children_consistency();
-  if (re == null) {
+
+  //-- parents_children_consistency
+  try {
+    validator.parents_children_consistency();
     document.getElementById('err_parents_children_consistency').className = "table-success";
-  } else {
+  } 
+  catch(e) {
     document.getElementById('err_parents_children_consistency').className = "table-danger";
-    document.getElementById('err_parents_children_consistency').children[1].innerHTML = re;
+    document.getElementById('err_parents_children_consistency').children[1].innerHTML = e;
     isValid = false;
   }
-  re = validator.semantics_arrays();
-  if (re == null) {
+
+  //-- semantics_arrays
+  try {
+    validator.semantics_arrays();
     document.getElementById('err_semantics_arrays').className = "table-success";
-  } else {
+  }
+  catch(e) {
     document.getElementById('err_semantics_arrays').className = "table-danger";
-    document.getElementById('err_semantics_arrays').children[1].innerHTML = re;
+    document.getElementById('err_semantics_arrays').children[1].innerHTML = e;
     isValid = false;
   }
 
@@ -301,40 +335,42 @@ function allvalidations(validator, fname) {
     display_final_result(isValid, hasWarnings);
     return;
   }
+
   //-- WARNINGS
-  re = validator.duplicate_vertices();
-  if (re == null) {
+  
+  //-- duplicate_vertices
+  try {
+    validator.duplicate_vertices();
     document.getElementById('war_duplicate_vertices').className = "table-success";
-  } else {
+  } catch(e) {
     document.getElementById('war_duplicate_vertices').className = "table-warning";
-    document.getElementById('war_duplicate_vertices').children[1].innerHTML = re;
+    document.getElementById('war_duplicate_vertices').children[1].innerHTML = e;
     hasWarnings = true;
   }
-  re = validator.extra_root_properties();
-  if (re == null) {
+
+  //-- extra_root_properties
+  try {
+    validator.extra_root_properties();
     document.getElementById('war_extra_root_properties').className = "table-success";
-  } else {
+  } 
+  catch(e) {
     document.getElementById('war_extra_root_properties').className = "table-warning";
-    document.getElementById('war_extra_root_properties').children[1].innerHTML = re;
+    document.getElementById('war_extra_root_properties').children[1].innerHTML = e;
     hasWarnings = true;
   }    
-  re = validator.unused_vertices();
-  if (re == null) {
+
+  //-- unused_vertices
+  try {
+    validator.unused_vertices();
     document.getElementById('war_unused_vertices').className = "table-success";
-  } else {
+  } 
+  catch(e) {
     document.getElementById('war_unused_vertices').className = "table-warning";
-    document.getElementById('war_unused_vertices').children[1].innerHTML = re;
+    document.getElementById('war_unused_vertices').children[1].innerHTML = e;
     hasWarnings = true;
   }     
   //-- FINAL RESULTS
-  display_final_result(isValid, hasWarnings);
-  console.log(re);  
+  display_final_result(isValid, hasWarnings); 
 }
-
-
-
-
-
-
 
 main();
