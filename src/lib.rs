@@ -122,6 +122,24 @@ impl Validator {
         return Err(JsValue::from_str(&s.to_string()));
     }
 
+    pub fn materials(&self) -> Result<(), JsValue> {
+        let summ = &self.valsumm["materials"];
+        if summ.has_errors() == false {
+            return Ok(());
+        }
+        let s = format!("{}", summ);
+        return Err(JsValue::from_str(&s.to_string()));
+    }
+
+    pub fn textures(&self) -> Result<(), JsValue> {
+        let summ = &self.valsumm["textures"];
+        if summ.has_errors() == false {
+            return Ok(());
+        }
+        let s = format!("{}", summ);
+        return Err(JsValue::from_str(&s.to_string()));
+    }
+
     //-- WARNINGS
     pub fn duplicate_vertices(&self) -> Result<(), JsValue> {
         let summ = &self.valsumm["duplicate_vertices"];

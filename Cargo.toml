@@ -1,6 +1,6 @@
 [package]
 name = "cjval_wasm"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -14,8 +14,8 @@ parking_lot_core = "=0.8.0"
 indexmap = "1.9.1"
 
 [dependencies.cjval]
-version = "0.5.0"
-# path = "../cjval/"
+# version = "0.5.0"
+path = "../cjval/"
 
 [profile.release]
 # Tell `rustc` to optimize for small code size.
