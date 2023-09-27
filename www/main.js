@@ -187,7 +187,7 @@ function download_all_extensions(val, _callback) {
           li.appendChild(sp);
           document.getElementById("theextensions").appendChild(li);
           document.getElementById('err_ext_schema').className = "table-danger";
-          document.getElementById('err_ext_schema').children[1].innerHTML = "Cannot download Extension schema because of CORS, (<a href='https://github.com/cityjson/cjval/issues/1'>how to fix</a>)";
+          document.getElementById('err_ext_schema').children[1].innerHTML = "Cannot download Extension schema (maybe because of CORS, <a href='https://github.com/cityjson/cjval/issues/1'>how to fix this</a>)";
           display_final_result(false, false);
           return;
         } else if (results[i] == "404: Not Found") {
