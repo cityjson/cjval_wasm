@@ -102,9 +102,9 @@ async function handleFiles(files) {
       if (cjv == 20) {
         document.getElementById('cjversion').innerHTML = "CityJSON v2.0 (schemas used: v" + cjschemav + ")";
       } else if (cjv == 11) {
-        document.getElementById('cjversion').innerHTML = "v1.1 (it would be a good idea to upgrade to v2.0)"; 
+        document.getElementById('cjversion').innerHTML = "v1.1 (it would be a good idea to <a href='https://www.cityjson.org/tutorials/upgrade20/'>upgrade to v2.0</a>)"; 
       } else if (cjv == 10) {
-        document.getElementById('cjversion').innerHTML = "v1.0 (it would be a good idea to upgrade to v2.0)";
+        document.getElementById('cjversion').innerHTML = "v1.0 (it would be a good idea to <a href='https://www.cityjson.org/tutorials/upgrade20/'>upgrade to v2.0</a>)";
       } else {
         document.getElementById('cjversion').innerHTML = "version <1.0 (no validation possible)";
       }
