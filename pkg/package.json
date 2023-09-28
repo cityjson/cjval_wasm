@@ -1,6 +1,6 @@
 {
   "name": "cjval_wasm",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "files": [
     "cjval_wasm_bg.wasm",
     "cjval_wasm.js",
@@ -8,5 +8,7 @@
   ],
   "module": "cjval_wasm.js",
   "types": "cjval_wasm.d.ts",
-  "sideEffects": false
+  "sideEffects": [
+    "./snippets/*"
+  ]
 }

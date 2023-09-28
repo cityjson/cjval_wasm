@@ -8,6 +8,8 @@ const allerrors = ["err_json_syntax",
                    "err_parents_children_consistency", 
                    "err_wrong_vertex_index",
                    "err_semantics_arrays", 
+                   "err_materials", 
+                   "err_textures", 
                    "war_duplicate_vertices",
                    "war_unused_vertices",
                    "war_extra_root_properties"
@@ -97,10 +99,12 @@ async function handleFiles(files) {
     console.log(cjschemav);
     let cjf = validator.is_cityjsonfeature();
     if (cjf == false) {
-      if (cjv == 11){
-        document.getElementById('cjversion').innerHTML = "CityJSON v1.1 (schemas used: v" + cjschemav + ")";
+      if (cjv == 20) {
+        document.getElementById('cjversion').innerHTML = "CityJSON v2.0 (schemas used: v" + cjschemav + ")";
+      } else if (cjv == 11) {
+        document.getElementById('cjversion').innerHTML = "v1.1 (it would be a good idea to <a href='https://www.cityjson.org/tutorials/upgrade20/'>upgrade to v2.0</a>)"; 
       } else if (cjv == 10) {
-        document.getElementById('cjversion').innerHTML = "v1.0 (it would be a good idea to upgrade to v1.1)";
+        document.getElementById('cjversion').innerHTML = "v1.0 (it would be a good idea to <a href='https://www.cityjson.org/tutorials/upgrade20/'>upgrade to v2.0</a>)";
       } else {
         document.getElementById('cjversion').innerHTML = "version <1.0 (no validation possible)";
       }
@@ -183,7 +187,7 @@ function download_all_extensions(val, _callback) {
           li.appendChild(sp);
           document.getElementById("theextensions").appendChild(li);
           document.getElementById('err_ext_schema').className = "table-danger";
-          document.getElementById('err_ext_schema').children[1].innerHTML = "Cannot download Extension schema because of CORS, (<a href='https://github.com/cityjson/cjval/issues/1'>how to fix</a>)";
+          document.getElementById('err_ext_schema').children[1].innerHTML = "Cannot download Extension schema (maybe because of CORS, <a href='https://github.com/cityjson/cjval/issues/1'>how to fix this</a>)";
           display_final_result(false, false);
           return;
         } else if (results[i] == "404: Not Found") {
@@ -275,7 +279,7 @@ function allvalidations(validator, fname) {
     return;
   }
 
-  if (validator.get_input_cityjson_version() == 11) {
+  if (validator.get_input_cityjson_version() > 10)  {
     try {
       validator.extensions();
       document.getElementById('err_ext_schema').className = "table-success";
@@ -327,6 +331,29 @@ function allvalidations(validator, fname) {
   catch(e) {
     document.getElementById('err_semantics_arrays').className = "table-danger";
     document.getElementById('err_semantics_arrays').children[1].innerHTML = e;
+    isValid = false;
+  }
+
+  console.log("materials");
+  //-- materials
+  try {
+    validator.materials();
+    document.getElementById('err_materials').className = "table-success";
+  }
+  catch(e) {
+    document.getElementById('err_materials').className = "table-danger";
+    document.getElementById('err_materials').children[1].innerHTML = e;
+    isValid = false;
+  }
+
+  //-- textures
+  try {
+    validator.textures();
+    document.getElementById('err_textures').className = "table-success";
+  }
+  catch(e) {
+    document.getElementById('err_textures').className = "table-danger";
+    document.getElementById('err_textures').children[1].innerHTML = e;
     isValid = false;
   }
 

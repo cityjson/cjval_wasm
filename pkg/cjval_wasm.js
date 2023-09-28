@@ -217,6 +217,16 @@ export class Validator {
     }
     /**
     */
+    materials() {
+        wasm.validator_materials(this.ptr);
+    }
+    /**
+    */
+    textures() {
+        wasm.validator_textures(this.ptr);
+    }
+    /**
+    */
     duplicate_vertices() {
         wasm.validator_duplicate_vertices(this.ptr);
     }

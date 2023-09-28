@@ -58,6 +58,12 @@ export class Validator {
   semantics_arrays(): void;
 /**
 */
+  materials(): void;
+/**
+*/
+  textures(): void;
+/**
+*/
   duplicate_vertices(): void;
 /**
 */
@@ -86,6 +92,8 @@ export interface InitOutput {
   readonly validator_parents_children_consistency: (a: number) => void;
   readonly validator_wrong_vertex_index: (a: number) => void;
   readonly validator_semantics_arrays: (a: number) => void;
+  readonly validator_materials: (a: number) => void;
+  readonly validator_textures: (a: number) => void;
   readonly validator_duplicate_vertices: (a: number) => void;
   readonly validator_extra_root_properties: (a: number) => void;
   readonly validator_unused_vertices: (a: number) => void;

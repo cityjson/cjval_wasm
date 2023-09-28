@@ -16,6 +16,8 @@ export function validator_extensions(a: number): void;
 export function validator_parents_children_consistency(a: number): void;
 export function validator_wrong_vertex_index(a: number): void;
 export function validator_semantics_arrays(a: number): void;
+export function validator_materials(a: number): void;
+export function validator_textures(a: number): void;
 export function validator_duplicate_vertices(a: number): void;
 export function validator_extra_root_properties(a: number): void;
 export function validator_unused_vertices(a: number): void;

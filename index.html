@@ -23,11 +23,12 @@
   </form>
 
   <div class="alert alert-primary text-center" role="alert">
+    <small class="text-muted">CityJSON v2.0, v1.1, and v1.0 are supported, Extensions included</small><br>
     <small class="text-muted">
       <i class="bi bi-github"></i>
-      <a href="https://github.com/cityjson/cjval">cjval</a> v0.5.0 is used
+      <a href="https://github.com/cityjson/cjval">cjval</a> v0.6.0 is used
     </small><br>
-    <small class="text-muted"><i class="bi bi-exclamation-circle"></i> Files are never uploaded, validation is done locally</small><br>
+    <small class="text-muted"><i class="bi bi-exclamation-circle"></i> Validation is done locally, file are not uploaded anywhere</small><br>
     <small class="text-muted"><i class="bi bi-exclamation-circle"></i> Only schema-validation, <b>geometries are not validated</b> (<a href="https://www.cityjson.org/tutorials/validation/">see details</a>)</small>
   </div>
 
@@ -75,12 +76,20 @@
         <td>semantics_arrays</td>
         <td ></td>
       </tr>
-      <tr id="war_duplicate_vertices">
-        <td>duplicate_vertices (warnings)</td>
+      <tr id="err_textures">
+        <td>textures</td>
+        <td ></td>
+      </tr>
+      <tr id="err_materials">
+        <td>materials</td>
         <td ></td>
       </tr>
       <tr id="war_extra_root_properties">
         <td>extra_root_properties (warnings)</td>
+        <td ></td>
+      </tr>
+      <tr id="war_duplicate_vertices">
+        <td>duplicate_vertices (warnings)</td>
         <td ></td>
       </tr>
       <tr id="war_unused_vertices">
