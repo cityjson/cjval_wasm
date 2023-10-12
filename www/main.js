@@ -114,91 +114,87 @@ async function handleFiles(files) {
     }
   //-- CityJSONFeature -- CityJSONL
   } else if (extension == 'jsonl') {
-    console.log("CITYJSONL");
+    // console.log("CITYJSONL");
     var table1 = document.getElementById("tab_cjf_summary");
+    // console.log(table1);
     var reader = new FileReader();
-    let validator;
+    var validator;
     reader.onload = (event) => {
       const contents = event.target.result;
       const lines = contents.split('\n'); // Split the content into lines
       let b_metadata = false;
       var noline = 1;
-      for (const line of lines) {
-        if (line == "") {
-          continue;
-        }
-        if (b_metadata == false) {
-          console.log("metadata:", line);
-          validator = Validator.from_str(line);
-          let cjv = validator.get_input_cityjson_version();
-          let cjschemav = validator.get_cityjson_schema_version();
-          if (cjv == 20) {
-            document.getElementById('cjversion').innerHTML = "CityJSONFeature v2.0 (schemas used: v" + cjschemav + ")";
-          } else if (cjv == 11) {
-            document.getElementById('cjversion').innerHTML = "CityJSONFeature v1.1 (it would be a good idea to <a href='https://www.cityjson.org/tutorials/upgrade20/'>upgrade to v2.0</a>)"; 
-          } else {
-            document.getElementById('cjversion').innerHTML = "CityJSONFeature version <=1.0 (no validation possible)";
-          }
-          let row = document.createElement("tr");
-          let c1 = document.createElement("td");
-          let c2 = document.createElement("td");
-          c1.innerText = noline;
-          row.appendChild(c1);
-          row.appendChild(c2);
-          table1.appendChild(row);
 
-          try {
-            validator.validate();
-            var status = validator.get_status();
-            var errs = validator.get_errors_string();
-            if (status == 1) {
-              c2.innerText = "✅";
-            } else if (status == 0) {
-              c2.innerText = "🟡 " + errs;
-            }  else {
-              c2.innerText = "❌ (first line must be a CityJSON object) | " + errs;
-            }
-            // console.log("status:", status);
-          }
-          catch(e) {
-            // console.log(e);
-            c2.innerText = "❌ (first line must be a CityJSON object)";
-          }
-          b_metadata = true;
-        } else {
-          console.log(line);
-          let row = document.createElement("tr");
-          let c1 = document.createElement("td");
-          let c2 = document.createElement("td");
-          c1.innerText = noline;
-          row.appendChild(c1);
-          row.appendChild(c2);
-          table1.appendChild(row);
-          try {
-            var re = validator.from_str_cjfeature(line);
-            validator.validate();
-            var status = validator.get_status();
-            if (status == 1) {
-              // console.log("1:");
-              c2.innerText = "✅";
-            } else if (status == 0){
-              var errs = validator.get_errors_string();
-              // console.log("0:", errs);
-              c2.innerText = "🟡 " + errs;
-            } else { //-- -1
-              var errs = validator.get_errors_string();
-              c2.innerText = "❌ " + errs;
-              // console.log("-1:", errs);
-            }
-          }
-          catch(e) {
-            c2.innerText = "❌ " + e;
-            // console.log("-1:", e);
-          }
-        }
-        noline++;
+      console.log("metadata:", lines[0]);
+      validator = Validator.from_str(lines[0]);
+      let cjv = validator.get_input_cityjson_version();
+      let cjschemav = validator.get_cityjson_schema_version();
+      if (cjv == 20) {
+        document.getElementById('cjversion').innerHTML = "CityJSONFeature v2.0 (schemas used: v" + cjschemav + ")";
+      } else if (cjv == 11) {
+        document.getElementById('cjversion').innerHTML = "CityJSONFeature v1.1 (it would be a good idea to <a href='https://www.cityjson.org/tutorials/upgrade20/'>upgrade to v2.0</a>)"; 
+      } else {
+        document.getElementById('cjversion').innerHTML = "CityJSONFeature version <=1.0 (no validation possible)";
       }
-    };
+      let row = document.createElement("tr");
+      let c1 = document.createElement("td");
+      let c2 = document.createElement("td");
+      c1.innerText = 1;
+      row.appendChild(c1);
+      row.appendChild(c2);
+      table1.appendChild(row);
+
+      download_all_extensions(validator, () => {
+        validator.validate();
+        var status = validator.get_status();
+        var errs = validator.get_errors_string();
+        if (status == 1) {
+          c2.innerText = "✅";
+        } else if (status == 0) {
+          c2.innerText = "🟡 " + errs;
+        }  else {
+          c2.innerText = "❌ (first line must be a valid CityJSON object) | " + errs;
+        }
+        // execute a function for each array element
+        lines.forEach(function(item, index) {
+          if (index >= 1) {
+            if (item == "") {
+              return;
+            }
+            // console.log(item);
+            // console.log("---", validator.get_extensions_urls());
+            let row = document.createElement("tr");
+            let c1 = document.createElement("td");
+            let c2 = document.createElement("td");
+            c1.innerText = index+1;
+            row.appendChild(c1);
+            row.appendChild(c2);
+            table1.appendChild(row);
+            try {
+              var re = validator.from_str_cjfeature(item);
+              validator.validate();
+              var status = validator.get_status();
+              if (status == 1) {
+                // console.log("1:");
+                c2.innerText = "✅";
+              } else if (status == 0){
+                var errs = validator.get_errors_string();
+                // console.log("0:", errs);
+                c2.innerText = "🟡 " + errs;
+              } else { //-- -1
+                var errs = validator.get_errors_string();
+                c2.innerText = "❌ " + errs;
+                // console.log("-1:", errs);
+              }
+            }
+            catch(e) {
+              c2.innerText = "❌ " + e;
+              // console.log("-1:", e);
+            }
+          }
+        });
+      });
+    }
     reader.readAsText(f);
     // var removeTab = document.getElementById('tab_cj_summary');
     // var parentEl = removeTab.parentElement;
@@ -213,6 +209,22 @@ async function handleFiles(files) {
 }
 
 function reset_results(){
+  console.log("reset_results");
+  var trs = document.getElementById("tab_cjf_summary").getElementsByTagName("tr");
+  while(trs.length>0) trs[0].parentNode.removeChild(trs[0]);
+  var t = document.getElementById("tab_cjf_summary");
+  let head = document.createElement("thead");
+  let tr = document.createElement("tr");
+  let th1 = document.createElement("th");
+  let th2 = document.createElement("th");
+  th1.innerText = "line#";
+  th2.innerText = "valid?";
+  tr.appendChild(th1);
+  tr.appendChild(th2);
+  head.appendChild(tr);
+  t.appendChild(head);
+  document.getElementById("tab_cj_summary").classList.add('invisible');
+  document.getElementById("tab_cjf_summary").classList.add('invisible');
   const myNode = document.getElementById("theextensions");
   myNode.innerHTML = '';
   document.getElementById("theresult").classList.remove("bg-success"); 
@@ -319,12 +331,6 @@ function download_all_extensions(val, _callback) {
             display_final_result(false, false);
             return;
           }
-          // results[i].text().then(function(cc) {
-          //   console.log("cc");
-          //   // console.log(cc);
-          //   let ff = val.add_one_extension_from_str(urls[i], cc);
-          //   console.log(ff);
-          // });
         }
       }
       _callback();
