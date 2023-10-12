@@ -1,5 +1,6 @@
 use cjval;
 use indexmap::IndexMap;
+use std::fmt::Write;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -44,6 +45,16 @@ impl Validator {
         } else {
             -1
         }
+    }
+
+    pub fn get_errors_string(&self) -> JsValue {
+        let mut s = String::new();
+        for (_criterion, summ) in self.valsumm.iter() {
+            if summ.has_errors() == true {
+                write!(&mut s, "{} | ", summ).expect("Problem writing String");
+            }
+        }
+        return JsValue::from_str(&s.to_string());
     }
 
     pub fn get_input_cityjson_version(&self) -> i32 {

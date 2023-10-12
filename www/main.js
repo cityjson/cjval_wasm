@@ -115,12 +115,14 @@ async function handleFiles(files) {
   //-- CityJSONFeature -- CityJSONL
   } else if (extension == 'jsonl') {
     console.log("CITYJSONL");
+    var table1 = document.getElementById("tab_cjf_summary");
     var reader = new FileReader();
     let validator;
     reader.onload = (event) => {
       const contents = event.target.result;
       const lines = contents.split('\n'); // Split the content into lines
       let b_metadata = false;
+      var noline = 1;
       for (const line of lines) {
         if (line == "") {
           continue;
@@ -137,32 +139,71 @@ async function handleFiles(files) {
           } else {
             document.getElementById('cjversion').innerHTML = "CityJSONFeature version <=1.0 (no validation possible)";
           }
+          let row = document.createElement("tr");
+          let c1 = document.createElement("td");
+          let c2 = document.createElement("td");
+          c1.innerText = noline;
+          row.appendChild(c1);
+          row.appendChild(c2);
+          table1.appendChild(row);
+
           try {
             validator.validate();
             var status = validator.get_status();
-            console.log("status:", status);
+            var errs = validator.get_errors_string();
+            if (status == 1) {
+              c2.innerText = "✅";
+            } else if (status == 0) {
+              c2.innerText = "🟡 " + errs;
+            }  else {
+              c2.innerText = "❌ (first line must be a CityJSON object) | " + errs;
+            }
+            // console.log("status:", status);
           }
           catch(e) {
-            console.log(e);
+            // console.log(e);
+            c2.innerText = "❌ (first line must be a CityJSON object)";
           }
-          //-- FINAL RESULTS
-          // display_final_result(isValid, hasWarnings); 
           b_metadata = true;
         } else {
           console.log(line);
+          let row = document.createElement("tr");
+          let c1 = document.createElement("td");
+          let c2 = document.createElement("td");
+          c1.innerText = noline;
+          row.appendChild(c1);
+          row.appendChild(c2);
+          table1.appendChild(row);
           try {
             var re = validator.from_str_cjfeature(line);
             validator.validate();
             var status = validator.get_status();
-            console.log("status:", status);
+            if (status == 1) {
+              // console.log("1:");
+              c2.innerText = "✅";
+            } else if (status == 0){
+              var errs = validator.get_errors_string();
+              // console.log("0:", errs);
+              c2.innerText = "🟡 " + errs;
+            } else { //-- -1
+              var errs = validator.get_errors_string();
+              c2.innerText = "❌ " + errs;
+              // console.log("-1:", errs);
+            }
           }
           catch(e) {
-            console.log("wrong type!!!!", e);
+            c2.innerText = "❌ " + e;
+            // console.log("-1:", e);
           }
         }
+        noline++;
       }
     };
     reader.readAsText(f);
+    // var removeTab = document.getElementById('tab_cj_summary');
+    // var parentEl = removeTab.parentElement;
+    // parentEl.removeChild(removeTab);
+    document.getElementById("tab_cjf_summary").classList.remove('invisible');
   } else  {
     console.log("TYPE NOT SUPPORTED");
     var s = "File type not allowed (only .json and .jsonl)";
@@ -193,8 +234,8 @@ function wrong_filetype(s){
 }
 
 function display_final_result(isValid, hasWarnings) {
-  // $("#tab-errors").show();
   document.getElementById("tab_cj_summary").classList.remove('invisible');
+  document.getElementById("tab_cjf_summary").classList.add('invisible');
   if (isValid) {
     if (!hasWarnings) {
       document.getElementById("theresult").innerHTML = "The file is 100% valid!";
@@ -210,6 +251,7 @@ function display_final_result(isValid, hasWarnings) {
   }
   document.getElementById("theresult").classList.remove('invisible');
 }
+
 
 
 function download_all_extensions(val, _callback) {
