@@ -10,6 +10,18 @@ export class Validator {
 */
   static from_str(s: string): Validator;
 /**
+* @param {string} s
+*/
+  from_str_cjfeature(s: string): void;
+/**
+* @returns {number}
+*/
+  get_status(): number;
+/**
+* @returns {any}
+*/
+  get_errors_string(): any;
+/**
 * @returns {number}
 */
   get_input_cityjson_version(): number;
@@ -79,6 +91,9 @@ export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly __wbg_validator_free: (a: number) => void;
   readonly validator_from_str: (a: number, b: number) => number;
+  readonly validator_from_str_cjfeature: (a: number, b: number, c: number) => void;
+  readonly validator_get_status: (a: number) => number;
+  readonly validator_get_errors_string: (a: number) => number;
   readonly validator_get_input_cityjson_version: (a: number) => number;
   readonly validator_get_cityjson_schema_version: (a: number) => number;
   readonly validator_is_cityjsonfeature: (a: number) => number;

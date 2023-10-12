@@ -133,6 +133,28 @@ export class Validator {
         return Validator.__wrap(ret);
     }
     /**
+    * @param {string} s
+    */
+    from_str_cjfeature(s) {
+        var ptr0 = passStringToWasm0(s, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        var len0 = WASM_VECTOR_LEN;
+        wasm.validator_from_str_cjfeature(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {number}
+    */
+    get_status() {
+        var ret = wasm.validator_get_status(this.ptr);
+        return ret;
+    }
+    /**
+    * @returns {any}
+    */
+    get_errors_string() {
+        var ret = wasm.validator_get_errors_string(this.ptr);
+        return takeObject(ret);
+    }
+    /**
     * @returns {number}
     */
     get_input_cityjson_version() {
