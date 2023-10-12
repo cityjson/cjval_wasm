@@ -16,6 +16,36 @@ impl Validator {
         Validator { v: re, valsumm: vs }
     }
 
+    pub fn from_str_cjfeature(&mut self, s: &str) -> Result<(), JsValue> {
+        let re = self.v.from_str_cjfeature(&s);
+        if re.is_ok() {
+            return Ok(());
+        }
+        let s = format!("{:?}", re);
+        return Err(JsValue::from_str(&s.to_string()));
+    }
+
+    pub fn get_status(&self) -> i32 {
+        let mut has_errors = false;
+        let mut has_warnings = false;
+        for (_criterion, summ) in self.valsumm.iter() {
+            if summ.has_errors() == true {
+                if summ.is_warning() == true {
+                    has_warnings = true;
+                } else {
+                    has_errors = true;
+                }
+            }
+        }
+        if has_errors == false && has_warnings == false {
+            1
+        } else if has_errors == false && has_warnings == true {
+            0
+        } else {
+            -1
+        }
+    }
+
     pub fn get_input_cityjson_version(&self) -> i32 {
         self.v.get_input_cityjson_version()
     }

@@ -19,7 +19,7 @@
   <form id="dropbox" class="my-form">
     <p><img class="logo" src="img/cityjson_logo.svg"></p>
     <p>Drop a file to validate it</p>
-    <input type="file" id="fileElem" accept=".json"  multiple style="display: none"/>
+    <input type="file" id="fileElem" accept=".json,.jsonl"  multiple style="display: none"/>
   </form>
 
   <div class="alert alert-primary text-center" role="alert">
@@ -44,7 +44,7 @@
   </div>
 
 
-  <table id="tab-errors" class="table invisible">
+  <table id="tab_cj_summary" class="table invisible">
     <thead>
     <tr>
       <th scope="col">criterion</th>
@@ -98,6 +98,17 @@
       </tr>      
     </tbody>
   </table>
+
+  <table id="tab-cjf-summary" class="table invisible">
+    <thead>
+    <tr>
+      <th scope="col">line</th>
+      <th scope="col">details</th>
+    </tr>
+  </thead>
+    </tbody>
+  </table>
+
 
 </div>
 </div>
