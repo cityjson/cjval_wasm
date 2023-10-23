@@ -199,7 +199,7 @@ async function handleFiles(files) {
     // var removeTab = document.getElementById('tab_cj_summary');
     // var parentEl = removeTab.parentElement;
     // parentEl.removeChild(removeTab);
-    document.getElementById("tab_cjf_summary").classList.remove('invisible');
+    document.getElementById("tab_cjf_summary").classList.remove('collapse');
   } else  {
     console.log("TYPE NOT SUPPORTED");
     var s = "File type not allowed (only .json and .jsonl)";
@@ -223,8 +223,8 @@ function reset_results(){
   tr.appendChild(th2);
   head.appendChild(tr);
   t.appendChild(head);
-  document.getElementById("tab_cj_summary").classList.add('invisible');
-  document.getElementById("tab_cjf_summary").classList.add('invisible');
+  document.getElementById("tab_cj_summary").classList.add('collapse');
+  document.getElementById("tab_cjf_summary").classList.add('collapse');
   const myNode = document.getElementById("theextensions");
   myNode.innerHTML = '';
   document.getElementById("theresult").classList.remove("bg-success"); 
@@ -241,13 +241,13 @@ function reset_results(){
 function wrong_filetype(s){
   document.getElementById("theresult").innerHTML = s;
   document.getElementById("theresult").classList.add("bg-danger");
-  document.getElementById("tab_cj_summary").classList.remove('invisible');
+  document.getElementById("tab_cj_summary").classList.remove('collapse');
   document.getElementById("theresult").classList.remove('invisible');
 }
 
 function display_final_result(isValid, hasWarnings) {
-  document.getElementById("tab_cj_summary").classList.remove('invisible');
-  document.getElementById("tab_cjf_summary").classList.add('invisible');
+  document.getElementById("tab_cj_summary").classList.remove('collapse');
+  document.getElementById("tab_cjf_summary").classList.add('collapse');
   if (isValid) {
     if (!hasWarnings) {
       document.getElementById("theresult").innerHTML = "The file is 100% valid!";
