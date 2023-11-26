@@ -6,7 +6,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script type="module" src="main.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="./css/style.css"/>
 </head>
 
@@ -25,15 +25,16 @@
 
   <div class="alert alert-primary text-center" role="alert">
     <h5 class="alert-heading">CityJSON schema validator</h5>
-    <small class="text-muted"><i class="bi bi-exclamation-circle"></i> geometries are <b>not</b> validated! (<a href="https://www.cityjson.org/tutorials/validation/" class="alert-link">see details</a>)</small>
-    <hr>
-    <small class="text-muted">CityJSON v2.0, v1.1, and v1.0 are supported<br>(including <a href="https://www.cityjson.org/cityjsonseq/" class="alert-link">CityJSONSeq</a> and <a class="alert-link" href="https://www.cityjson.org/extensions/">Extensions</a>)</small>
-    <hr>
-    <small class="text-muted"><i class="bi bi-exclamation-circle"></i> Validation is done locally, file are not uploaded anywhere</small><br>
     <small class="text-muted">
       <i class="bi bi-github"></i>
       <a href="https://github.com/cityjson/cjval" class="alert-link">cjval</a> v0.6.0 is used
-    </small><br>
+    </small>
+    <hr>
+    <small class="text-muted">CityJSON v2.0, v1.1, and v1.0 are supported<br>(including <a href="https://www.cityjson.org/cityjsonseq/" class="alert-link">CityJSONSeq</a> and <a class="alert-link" href="https://www.cityjson.org/extensions/">Extensions</a>)</small>
+    <hr>
+    <small class="text-muted"><i class="bi bi-exclamation-circle"></i> geometries are <b>not</b> validated! (<a href="https://www.cityjson.org/tutorials/validation/" class="alert-link">see details</a>)</small>
+    <br>
+    <small class="text-muted"><i class="bi bi-download"></i> Validation is done locally, files are not uploaded anywhere</small>
   </div>
 
   <h3 class="text-center"><span class="badge bg-danger" id="theresult"></span></h3>
