@@ -91,7 +91,7 @@ export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly __wbg_validator_free: (a: number) => void;
   readonly validator_from_str: (a: number, b: number) => number;
-  readonly validator_from_str_cjfeature: (a: number, b: number, c: number) => void;
+  readonly validator_from_str_cjfeature: (a: number, b: number, c: number, d: number) => void;
   readonly validator_get_status: (a: number) => number;
   readonly validator_get_errors_string: (a: number) => number;
   readonly validator_get_input_cityjson_version: (a: number) => number;
@@ -101,20 +101,32 @@ export interface InitOutput {
   readonly validator_validate: (a: number) => void;
   readonly validator_number_extensions: (a: number) => number;
   readonly validator_add_one_extension_from_str: (a: number, b: number, c: number, d: number, e: number) => number;
-  readonly validator_json_syntax: (a: number) => void;
-  readonly validator_schema: (a: number) => void;
-  readonly validator_extensions: (a: number) => void;
-  readonly validator_parents_children_consistency: (a: number) => void;
-  readonly validator_wrong_vertex_index: (a: number) => void;
-  readonly validator_semantics_arrays: (a: number) => void;
-  readonly validator_materials: (a: number) => void;
-  readonly validator_textures: (a: number) => void;
-  readonly validator_duplicate_vertices: (a: number) => void;
-  readonly validator_extra_root_properties: (a: number) => void;
-  readonly validator_unused_vertices: (a: number) => void;
-  readonly __wbindgen_malloc: (a: number) => number;
-  readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
+  readonly validator_json_syntax: (a: number, b: number) => void;
+  readonly validator_schema: (a: number, b: number) => void;
+  readonly validator_extensions: (a: number, b: number) => void;
+  readonly validator_parents_children_consistency: (a: number, b: number) => void;
+  readonly validator_wrong_vertex_index: (a: number, b: number) => void;
+  readonly validator_semantics_arrays: (a: number, b: number) => void;
+  readonly validator_materials: (a: number, b: number) => void;
+  readonly validator_textures: (a: number, b: number) => void;
+  readonly validator_duplicate_vertices: (a: number, b: number) => void;
+  readonly validator_extra_root_properties: (a: number, b: number) => void;
+  readonly validator_unused_vertices: (a: number, b: number) => void;
+  readonly __wbindgen_malloc: (a: number, b: number) => number;
+  readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
+  readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
 }
+
+export type SyncInitInput = BufferSource | WebAssembly.Module;
+/**
+* Instantiates the given `module`, which can either be bytes or
+* a precompiled `WebAssembly.Module`.
+*
+* @param {SyncInitInput} module
+*
+* @returns {InitOutput}
+*/
+export function initSync(module: SyncInitInput): InitOutput;
 
 /**
 * If `module_or_path` is {RequestInfo} or {URL}, makes a request and
@@ -124,4 +136,4 @@ export interface InitOutput {
 *
 * @returns {Promise<InitOutput>}
 */
-export default function init (module_or_path?: InitInput | Promise<InitInput>): Promise<InitOutput>;
+export default function __wbg_init (module_or_path?: InitInput | Promise<InitInput>): Promise<InitOutput>;
