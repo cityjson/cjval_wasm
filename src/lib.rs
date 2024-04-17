@@ -1,6 +1,7 @@
 use cjval;
 use indexmap::IndexMap;
 use std::fmt::Write;
+
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -9,7 +10,7 @@ pub struct Validator {
     valsumm: IndexMap<String, cjval::ValSummary>,
 }
 
-#[wasm_bindgen(catch)]
+#[wasm_bindgen()]
 impl Validator {
     pub fn from_str(s: &str) -> Validator {
         let re = cjval::CJValidator::from_str(&s);
