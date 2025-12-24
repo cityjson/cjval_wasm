@@ -2,7 +2,7 @@
 
 ## To compile and run locally:
 
-1. install [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/)
+1. install [wasm-pack](https://drager.github.io/wasm-pack/installer/)
 2. `wasm-pack build -t web --out-dir ./www/pkg/`
 3. `cd ./www/`
 4. `python -m http.server 8080` (or any local webserver will do)
