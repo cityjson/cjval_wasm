@@ -12,6 +12,10 @@ crate-type = ["cdylib"]
 wasm-bindgen = "0.2.74"
 parking_lot_core = "=0.8.0"
 indexmap = "1.9.1"
+# getrandom is pulled transitively (via ahash/jsonschema), but its 0.3.x line
+# requires both the `wasm_js` feature AND the `getrandom_backend="wasm_js"` cfg
+# flag (set in .cargo/config.toml) to compile for `wasm32-unknown-unknown`.
+getrandom = { version = "0.3", features = ["wasm_js"] }
 
 [dependencies.cjval]
 version = "0.10.0"
